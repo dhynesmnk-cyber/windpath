@@ -1,0 +1,1530 @@
+
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windpath — proposal</title>
+<style>
+:root{
+  --bg:#0c0f13; --panel:#141920; --panel2:#1a2129; --line:#252d38; --line2:#313b48;
+  --ink:#e7edf4; --ink2:#a7b4c2; --ink3:#75838f;
+  --pass:#3ecf8e; --warn:#f0b429; --refuse:#f2635f; --info:#5aa9e6; --accent:#c9a227;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px 90px}
+header{padding:56px 0 26px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:0 0 12px;font-weight:650;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--ink3)}
+.sub{color:var(--ink2);font-size:17px;max-width:70ch;margin:0}
+.meta{font-family:var(--mono);font-size:11.5px;color:var(--ink3);margin-top:20px;letter-spacing:.02em}
+h2{font-size:22px;margin:52px 0 6px;font-weight:620;letter-spacing:-.01em}
+h2 .n{font-family:var(--mono);font-size:12px;color:var(--accent);margin-right:12px;vertical-align:middle}
+.lede{color:var(--ink2);max-width:78ch;margin:0 0 22px}
+h3{font-size:15px;margin:26px 0 10px;font-weight:600;color:var(--ink)}
+p{margin:0 0 12px}
+.live{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pass);border:1px solid #23412f;background:#101a14;padding:3px 8px;border-radius:3px;margin-bottom:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;margin:14px 0}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:500;padding:9px 10px;border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+td.k{color:var(--ink);font-weight:500}
+tr:last-child td{border-bottom:none}
+.mono{font-family:var(--mono);font-size:12px}
+.badge{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid;white-space:nowrap}
+.b-pass{color:var(--pass);border-color:#23412f;background:#101a14}
+.b-warn{color:var(--warn);border-color:#463a17;background:#1a1608}
+.b-refuse{color:var(--refuse);border-color:#4a2523;background:#1c1010}
+.b-info{color:var(--info);border-color:#1e3a52;background:#0e1720}
+.b-mute{color:var(--ink3);border-color:var(--line2);background:var(--panel2)}
+button{font-family:var(--sans);font-size:13px;background:var(--panel2);color:var(--ink);border:1px solid var(--line2);border-radius:5px;padding:7px 13px;cursor:pointer;transition:.12s}
+button:hover{border-color:var(--ink3);background:#212a34}
+button.on{background:#2a3441;border-color:var(--info);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+input[type=range]{width:100%;accent-color:var(--accent)}
+input[type=text],input[type=number],select{background:#0e1319;border:1px solid var(--line2);color:var(--ink);border-radius:5px;padding:7px 10px;font-size:13px;font-family:var(--sans);width:100%}
+input[type=number]{font-family:var(--mono)}
+label.f{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.field{margin-bottom:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.two{grid-template-columns:1fr}}
+.verdict{border-left:3px solid var(--line2);padding:12px 16px;background:var(--panel2);border-radius:0 6px 6px 0;margin-top:14px}
+.verdict.pass{border-left-color:var(--pass)}
+.verdict.warn{border-left-color:var(--warn)}
+.verdict.refuse{border-left-color:var(--refuse)}
+.reason{font-size:13.5px;color:var(--ink2);margin-top:6px}
+.kv{font-family:var(--mono);font-size:11.5px;color:var(--ink3);white-space:pre-wrap;word-break:break-word;background:#0e1319;border:1px solid var(--line);border-radius:5px;padding:11px 13px;margin:8px 0;overflow-x:auto}
+.big{font-family:var(--mono);font-size:38px;font-weight:500;letter-spacing:-.02em;line-height:1}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.stat .lab{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.stat .val{font-family:var(--mono);font-size:27px;color:var(--ink)}
+.stat .note{font-size:12px;color:var(--ink3);margin-top:6px}
+.ladder{display:flex;flex-direction:column;gap:0;margin:18px 0}
+.rung{display:grid;grid-template-columns:52px 190px 1fr 130px;gap:14px;align-items:start;padding:15px 0;border-bottom:1px solid var(--line)}
+.rung:last-child{border-bottom:none}
+@media(max-width:820px){.rung{grid-template-columns:44px 1fr;}.rung .r3,.rung .r4{grid-column:2}}
+.rn{font-family:var(--mono);font-size:22px;color:var(--ink3);font-weight:500}
+.rt{font-size:14px;color:var(--ink);font-weight:600}
+.rs{font-size:12.5px;color:var(--ink3);margin-top:2px}
+.rd{font-size:13px;color:var(--ink2)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%}
+.funnel{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.fstep{display:grid;grid-template-columns:1fr 100px 84px;gap:12px;align-items:center}
+.fbar{height:34px;border-radius:4px;background:linear-gradient(90deg,#1d3a52,#2b5d7a);display:flex;align-items:center;padding:0 12px;font-family:var(--mono);font-size:12px;color:#cfe6f5;min-width:56px;transition:width .25s}
+.fbar.hot{background:linear-gradient(90deg,#4a3a10,#8a6d16);color:#f6e6b0}
+.fbar.win{background:linear-gradient(90deg,#173a2a,#256b4a);color:#c8f0da}
+.fnum{font-family:var(--mono);font-size:14px;text-align:right;color:var(--ink)}
+.frate{font-family:var(--mono);font-size:11px;text-align:right;color:var(--ink3)}
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line);margin:26px 0 0}
+.tab{background:none;border:none;border-bottom:2px solid transparent;border-radius:0;color:var(--ink3);font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;padding:11px 15px}
+.tab:hover{background:none;color:var(--ink)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.pane{display:none}.pane.on{display:block}
+.note{font-size:12.5px;color:var(--ink3);border-left:2px solid var(--line2);padding-left:12px;margin:14px 0}
+.ok{color:var(--pass)}.wn{color:var(--warn)}.rf{color:var(--refuse)}.inf{color:var(--info)}
+ul{margin:8px 0 14px;padding-left:20px}li{margin-bottom:6px;color:var(--ink2)}
+li strong{color:var(--ink)}
+.foot{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink3)}
+code{font-family:var(--mono);font-size:12.5px;background:#0e1319;border:1px solid var(--line);border-radius:3px;padding:1px 5px;color:#cfe0ee}
+.hr{height:1px;background:var(--line);margin:24px 0}
+.scroll{overflow-x:auto}
+button.primary{background:var(--accent);color:#14110a;border-color:var(--accent);font-weight:600}
+button.primary:hover{background:#dbb533;border-color:#dbb533}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,.co-row:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--info);outline-offset:2px}
+a{color:var(--info)}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.cta button{padding:10px 18px;font-size:14px}
+.intro p{max-width:78ch}
+.label-line{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+dl.key{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px 22px;margin:0}
+dl.key div{margin:0}
+dl.key dt{font-weight:600;color:var(--accent);font-size:13px}
+dl.key dd{margin:2px 0 0;font-size:13px;color:var(--ink2)}
+details.card>summary,.ask details>summary{cursor:pointer;font-weight:600;font-size:15px;color:var(--ink);list-style:none}
+details.card>summary::before,.ask details>summary::before{content:'▸';display:inline-block;margin-right:10px;color:var(--accent);transition:transform .12s}
+details[open]>summary::before{transform:rotate(90deg)}
+.ask{border-color:#4a3f17}
+.co-row:hover{background:#171d25}
+.co-detail{display:none}
+.co-detail.open{display:table-row}
+.co-detail td{background:#10151b;border-bottom:1px solid var(--line)}
+.tour-hl{position:relative;z-index:40;box-shadow:0 0 0 3px var(--accent),0 0 0 100vmax rgba(4,7,10,.72)!important;border-radius:8px;scroll-margin-top:16px}
+#tourPanel{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:min(560px,calc(100vw - 32px));z-index:60;background:var(--panel2);border:1px solid var(--accent);border-radius:10px;padding:16px 18px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#tourPanel .tp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+#tourPanel .tp-count{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+#tourPanel .tp-x{border:none;background:none;color:var(--ink3);font-size:16px;padding:2px 6px}
+#tourPanel .tp-title{font-weight:650;font-size:16px;margin-bottom:4px}
+#tourPanel .tp-body{font-size:13.5px;color:var(--ink2);line-height:1.55}
+#tourPanel .tp-dots{display:flex;gap:6px;margin:12px 0}
+#tourPanel .tp-dots i{width:7px;height:7px;border-radius:50%;background:var(--line2)}
+#tourPanel .tp-dots i.on{background:var(--accent)}
+#tourPanel .tp-nav{display:flex;justify-content:space-between;gap:10px}
+body.touring{padding-bottom:230px}
+@media(max-width:620px){
+  h2{font-size:20px}
+  .tab{padding:9px 10px;font-size:10.5px}
+  .fstep{grid-template-columns:1fr 64px 0}
+  .frate{display:none}
+  #tourPanel{padding:14px}
+}
+@media(max-width:700px){
+  #coTable thead{display:none}
+  #coTable,#coTable tbody{display:block}
+  #coTable tr.co-row{display:block;padding:12px 0;border-bottom:1px solid var(--line)}
+  #coTable tr.co-row td{display:block;border:none;padding:3px 0;min-width:0!important}
+  #coTable tr.co-detail.open{display:block;background:#10151b;padding:10px 12px;border-radius:6px;margin-bottom:8px}
+  #coTable tr.co-detail td{display:block;padding:0;border:none}
+  .fbar{white-space:normal;height:auto;min-height:34px;padding:6px 10px;line-height:1.3;min-width:62%}
+}
+@media print{#tourPanel,.cta{display:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Proposal · for discussion</div>
+  <h1>Windpath <em>/ finding the businesses worth advising on, while there is still time</em></h1>
+  <p class="sub">A quiet, public-data method for spotting owner-managed businesses that are heading towards a sale, a wind-down or a closure — early enough that a good outcome is still possible — and for reaching the owner through someone you already know.</p>
+  <div class="meta">Prepared for <span id="prepFor">you</span> · 7 November 2026 · UK registers are live in this demo; the US is a roadmap item · draft, not yet run on live mandates</div>
+  <div class="cta">
+    <button class="primary" id="tourStart">▶ Take the 3-minute tour</button>
+    <button id="jumpCompanies">Jump to the 20 real companies</button>
+  </div>
+</header>
+
+<div class="card intro" id="intro">
+  <h3 style="margin-top:0">In plain English</h3>
+  <p><strong>The problem.</strong> Most businesses don't close overnight. A year or two before it shows up anywhere obvious, the signs are already in the public record: accounts filed late, a sole director in their mid-sixties with nobody younger on the board, a new lender registering a charge. By the time it reaches an agent's listing or a court notice, someone else has usually been instructed and the value is draining away.</p>
+  <p><strong>What Windpath does.</strong> It reads those public records for the kind of company you would want to advise and ranks them by how realistic a deal is — not by how distressed they look. Then it asks one question about each: <em>who do you already know who could introduce you?</em> If the answer is nobody, it doesn't suggest an approach. It tells you which accountant, lawyer or lender you should be meeting instead.</p>
+  <p><strong>What it is sized for.</strong> One or two additional mandates a year, run by one person. Not a pipeline of dozens, and nothing that makes cold calls. The tool drafts and ranks; nothing is ever sent to an owner unless you decide to send it.</p>
+  <p style="margin-bottom:0"><strong>What you are being asked.</strong> A go / no-go on this direction. No price, no commitment. The last section sets out the three decisions that would let us scope a build.</p>
+  <div class="hr"></div>
+  <div class="label-line">Six words used throughout</div>
+  <dl class="key">
+    <div><dt>Rung</dt><dd>How far along a business is on its way to closing (0 = quietly decided, nothing visible; 5 = dissolved).</dd></div>
+    <div><dt>Signal</dt><dd>A fact in a public register that tends to appear before a sale or closure — e.g. late accounts.</dd></div>
+    <div><dt>Gate</dt><dd>A rule that blocks a company before anyone is approached — e.g. "already in liquidation".</dd></div>
+    <div><dt>Warm path</dt><dd>A named person you know who knows the owner, or can introduce you.</dd></div>
+    <div><dt>Gatekeeper</dt><dd>An accountant, lawyer, lender or insolvency practitioner who sees situations early and can route them.</dd></div>
+    <div><dt>Fee floor</dt><dd>The smallest fee you'd take a mandate for. Below it the hours don't pay.</dd></div>
+  </dl>
+</div>
+
+<div class="grid g3" style="margin-top:22px">
+  <div class="stat"><div class="lab">Visible, late end of the market</div><div class="val">~23,000</div><div class="note">Formal company insolvencies a year in England &amp; Wales. By then, the adviser is already chosen.</div></div>
+  <div class="stat"><div class="lab">Where big firms and agents appear</div><div class="val">Rung 3–4</div><div class="note">And only above a size that covers their minimum fee — roughly £5m enterprise value.</div></div>
+  <div class="stat"><div class="lab">The whitespace</div><div class="val">Rungs 0–2</div><div class="note">No incumbent adviser, the owner still decides, and going-concern value still exists.</div></div>
+</div>
+
+<div class="card" style="margin-top:22px">
+  <h3 style="margin-top:0">Why this is winnable</h3>
+  <p style="margin-bottom:8px">Large advisory firms and business-transfer agents generally arrive once a business is visibly for sale or insolvent, and only when the deal is big enough to cover their minimum fee. Below that size, and earlier in the sequence, there is no incumbent to displace and the owner still makes the decisions. The only way in is a relationship.</p>
+  <p style="margin-bottom:0"><strong style="color:var(--ink)">The competitive edge is not speed. It is stage</strong> — and a former-Big-4 adviser with a real network is exactly who gets the first call at that stage.</p>
+</div>
+
+<!-- ============ LADDER ============ -->
+<h2><span class="n">01</span>The closure ladder</h2>
+<p class="lede">A business does not close; it descends. At each rung a different set of options is still open, value drains away, and fewer advisers are willing to work it. Everything else in the method keys off the rung. Click any rung.</p>
+
+<div class="card" id="ladderCard">
+  <div class="live">Interactive</div>
+  <div class="ladder" id="ladder"></div>
+  <div class="note">Bars show recoverable going-concern value against rung 0. The marker shows where a large firm or business-transfer agent first finds the situation worth their time.</div>
+  <div id="rungDetail" class="kv" style="display:none"></div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab on" data-t="triggers">02 · Signals</button>
+  <button class="tab" data-t="gates">03 · Gates</button>
+  <button class="tab" data-t="score">04 · Scoring</button>
+  <button class="tab" data-t="funnel">05 · Pipeline</button>
+  <button class="tab" data-t="gk">06 · Gatekeepers</button>
+  <button class="tab" data-t="companies">07 · 20 real companies</button>
+  <button class="tab" data-t="bonnet">08 · Under the bonnet</button>
+</div>
+
+<!-- ============ GATES ============ -->
+<div class="pane" id="p-gates">
+  <h2 style="margin-top:34px"><span class="n">03</span>Gates</h2>
+  <p class="lede">Before any company is suggested for an approach it passes ten checks. Each returns PASS, WARN or REFUSE with a plain-English reason, and nothing is ever deleted — a refusal goes to a queue where a person decides. The checks are simple rules with no network, database or AI inside, so they are predictable and testable. Pick an example below (all fictional) or edit the record and watch the verdict change.</p>
+
+  <div class="chips" id="presets"></div>
+
+  <div class="card">
+    <div class="live">Live logic · gates G1–G10</div>
+    <div class="two">
+      <div>
+        <label class="f">Incoming record (editable JSON)</label>
+        <textarea id="recIn" class="kv" rows="22" style="width:100%;resize:vertical;font-family:var(--mono);font-size:11.5px"></textarea>
+      </div>
+      <div>
+        <label class="f">Gate results</label>
+        <div id="gateOut"></div>
+        <div id="gateVerdict"></div>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <div class="two">
+      <div>
+        <label class="f">Route decision</label>
+        <div id="routeOut"></div>
+      </div>
+      <div>
+        <label class="f">How to read the result</label>
+        <div style="font-size:13px;color:var(--ink2)"><p><span class="badge b-refuse">REFUSE</span> goes to the review queue with its reason. Never deleted.</p><p><span class="badge b-info">HUMAN</span> held for a person — for example a possible duplicate. A fuzzy name match alone never suppresses anything.</p><p><span class="badge b-warn">WARN</span> proceed with care, for example below the fee floor (needs a signed waiver).</p><p style="margin-bottom:0">Only a person ever sends anything to an owner.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCORE ============ -->
+<div class="pane" id="p-score">
+  <h2 style="margin-top:34px"><span class="n">04</span>Scoring</h2>
+  <p class="lede">Six factors — Transferability, Inherent value, Timing, Accessibility, Size and Cleanliness, nicknamed TITASC — two of which are hard gates rather than scores. Weights are deliberately skewed to Transferability and Accessibility — the two things a solo operator cannot buy and cannot fix later. Inherent value and size can be worked; a non-assignable contract and a missing warm path cannot.</p>
+
+  <div class="card">
+    <div class="live">Live logic · weights are yours to calibrate</div>
+    <div class="grid g2">
+      <div>
+        <div id="scoreInputs"></div>
+      </div>
+      <div>
+        <div style="text-align:center;padding:10px 0 4px">
+          <div class="lab" style="font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">TITASC score</div>
+          <div class="big" id="scoreOut">—</div>
+          <div id="scoreBand" style="margin-top:10px"></div>
+        </div>
+        <div class="hr"></div>
+        <div id="scoreBreak"></div>
+        <div id="scoreGateNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Component decomposition</h3>
+    <p style="font-size:13.5px">Most closing businesses are not buyable as a whole and <em>are</em> buyable in parts. Refusing a target on enterprise value misses the deal. Score the pair <code>(target, component)</code>, not the target.</p>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>Component</th><th>Buyer type</th><th>Transferability risk</th><th>Speed</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Customer contracts / book</td><td>Trade competitor</td><td>Change-of-control &amp; assignment clauses</td><td>2–6 wks</td></tr>
+        <tr><td class="k">Recurring revenue base</td><td>Trade or PE roll-up</td><td>Consent to novation</td><td>4–8 wks</td></tr>
+        <tr><td class="k">Team (acquihire)</td><td>Larger operator, same sector</td><td>TUPE, retention, key-person</td><td>4–12 wks</td></tr>
+        <tr><td class="k">IP, code, brand, domain</td><td>Trade; occasionally NPE</td><td>Ownership chain must be clean</td><td>2–6 wks</td></tr>
+        <tr><td class="k">Stock</td><td>Trade; closeout buyers</td><td>Perishability, obsolescence</td><td>days–wks</td></tr>
+        <tr><td class="k">Plant, equipment, vehicles</td><td>Auction; trade</td><td>Secured-creditor claims — check charges</td><td>days–wks</td></tr>
+        <tr><td class="k">Property interest / lease</td><td>Landlord; neighbouring occupier</td><td>Assignment consent, rent deposit</td><td>4–12 wks</td></tr>
+        <tr><td class="k">Regulatory approvals &amp; licences</td><td>Trade — <strong>often the whole value</strong></td><td>Personal vs entity licence; fitness tests</td><td>wks–months</td></tr>
+        <tr><td class="k">Order book / WIP</td><td>Trade</td><td>Client consent</td><td>2–4 wks</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note">A £400k-EV precision engineering firm with no buyer is uninteresting. The same firm holding a Tier-2 supplier approval, three blue-chip contracts with 18 months to run and a five-person inspection team may have three separate component buyers, each paying more than the whole is worth.</div>
+  </div>
+</div>
+
+<!-- ============ FUNNEL ============ -->
+<div class="pane" id="p-funnel">
+  <h2 style="margin-top:34px"><span class="n">05</span>Pipeline</h2>
+  <p class="lede">What the method might produce for one person in one year, sized for one or two closes. The starting figures are working estimates for a regional UK patch, not measurements — move them and watch the answer. The point is not the number; it is which lever moves it.</p>
+
+  <div class="card">
+    <div class="live">Live model</div>
+    <div class="grid g2">
+      <div id="funnelInputs"></div>
+      <div>
+        <div class="funnel" id="funnel"></div>
+        <div class="hr"></div>
+        <div class="grid g3" id="funnelStats"></div>
+      </div>
+    </div>
+    <div class="note" id="funnelNote"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Sensitivity — which lever is worth pulling</h3>
+    <div class="scroll"><table id="sensTable"></table></div>
+    <div class="note">Two levers matter and they are not the obvious ones. <strong>Warm-path coverage</strong> — doubling the universe adds work at every stage and barely moves closed deals; raising the proportion of targets with a named human route moves them directly. That is why the engine's output is a routing decision, not a list. And <strong>the capacity cap</strong> — once it binds, every upstream improvement is wasted until the fee floor rises or a second operator arrives. Watch which one binds before spending anything.</div>
+  </div>
+</div>
+
+<!-- ============ TRIGGERS ============ -->
+<div class="pane on" id="p-triggers">
+  <h2 style="margin-top:34px"><span class="n">02</span>Signals</h2>
+  <p class="lede">Sorted by lead time, because that is what decides whether you are early or late. Most engines monitor the confirming band and then wonder why they are always second. Filter by archetype or by what it costs to get.</p>
+
+  <div class="chips" id="trigFilters"></div>
+  <div class="card">
+    <div class="live">Register · 23 signals · sources checked 7 Nov 2026</div>
+    <div class="scroll"><table id="trigTable"></table></div>
+  </div>
+
+</div>
+
+<!-- ============ GATEKEEPERS ============ -->
+<div class="pane" id="p-gk">
+  <h2 style="margin-top:34px"><span class="n">06</span>Gatekeepers</h2>
+  <p class="lede">You will not out-search a large firm. You can out-relationship one, because relationships do not scale and large-firm origination runs on sector coverage and brand — not on being the person a Barnsley accountant rings on a Friday afternoon. So invert the funnel: 40–60 gatekeepers who each hold 10–50 relevant situations, instead of 500 targets approached directly.</p>
+
+  <div class="card">
+    <div class="live">Model · ring structure and yield</div>
+    <div class="scroll"><table id="gkTable"></table></div>
+    <div class="note">Ring 1 is finite and non-renewable. Burning it on poor-fit targets is the failure mode that kills this kind of practice — not a lack of leads.</div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">Warm-path routing protocol</h3>
+      <div class="kv">1. WHO holds decision rights?
+   owner / board / IP / PE / joint receivers
+
+2. WHO do we know that knows them?
+   1st degree → 2nd degree → gatekeeper → none
+
+3. ROUTE
+   1st or 2nd degree → through the named human,
+                       artefact attached
+   gatekeeper only    → brief the gatekeeper,
+                       let them make the intro
+   none               → DO NOT APPROACH.
+                       park it; work the ring instead
+
+4. Every approach carries the counterfactual,
+   not a pitch.
+
+5. Every approach is logged with: trigger,
+   evidence row, rung, archetype, route,
+   person, date.</div>
+      <p style="font-size:13px;margin:12px 0 0"><strong>A target with no route is not a lead.</strong> It is evidence that a gatekeeper ring is missing — which is itself actionable, and is what the warm-path coverage metric measures.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">The counterfactual — the actual door-opener</h3>
+      <p style="font-size:13.5px">One artefact, built once, reused on every approach. An owner does not want to sell a business. They want to stop being tired, stop being scared, or stop losing money. The thing that earns the meeting is a rigorous number for the difference between the two futures.</p>
+      <div class="two">
+        <div>
+          <div class="badge b-refuse">If you close</div>
+          <ul style="font-size:12.5px;margin-top:10px">
+            <li>Lease exit &amp; dilapidations</li>
+            <li>Statutory redundancy, N staff</li>
+            <li>Supplier settlement</li>
+            <li>Assets at auction recovery rates</li>
+            <li>Personal guarantee exposure</li>
+            <li>Tax on chargeable gains</li>
+            <li>BBL / CBILS shortfall</li>
+            <li>Residual wrongful-trading risk</li>
+          </ul>
+        </div>
+        <div>
+          <div class="badge b-pass">If you transact</div>
+          <ul style="font-size:12.5px;margin-top:10px">
+            <li>Net consideration, each of options a–h</li>
+            <li>Less fees</li>
+            <li>Less retained liabilities</li>
+            <li>Plus deferred / earn-out value</li>
+            <li>Employees transferred</li>
+            <li>Liabilities left in the entity</li>
+            <li>Reputation intact</li>
+            <li>Speed to certainty</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:13px;margin:14px 0 0">You can build this to a standard of rigour the owner has never seen applied to their own business, and that no agent's valuation email can match. It is also honest — sometimes the left column wins, and saying so is what earns the referral network.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Tone by archetype — enforced in code, not in a guideline</h3>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>Archetype</th><th>Opening frame</th><th>Never</th></tr></thead>
+      <tbody>
+        <tr><td class="k">A1 Succession void</td><td>"You've built something that took thirty years. It's worth knowing what the options are before you need them."</td><td class="rf">Anything implying you know their age or that they are winding down</td></tr>
+        <tr><td class="k">A2 Insolvency-driven</td><td>Via the IP or the accountant: "There may be a going-concern outcome here that beats an asset sale."</td><td class="rf">Anything direct to an owner who has ceased to control the company</td></tr>
+        <tr><td class="k">A3 Venture wind-down</td><td>"Your team and your IP have value independent of the company."</td><td class="rf">The word "acquihire" — founders hear it as failure</td></tr>
+        <tr><td class="k">A4 Structural decline</td><td>"Three of your competitors did X in the last eighteen months. Here's the aggregate picture."</td><td class="rf">Speculating about their trading position</td></tr>
+        <tr><td class="k">A5 Carve-out</td><td>Written brief to a professional. Data, comparables, process.</td><td class="rf">Warm-network framing — this is a document-led channel</td></tr>
+        <tr><td class="k">A6 Forced personal</td><td>Referral only. There is no approach.</td><td class="rf">Anything. There is no cold version of this.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ COMPANIES ============ -->
+<div class="pane" id="p-companies">
+  <h2 style="margin-top:34px"><span class="n">07</span>Twenty real companies, screened today</h2>
+  <p class="lede">This is what the method produces from public data alone. Four sectors with transferable value and clear succession or structural pressure, one region (Yorkshire &amp; Humber), screened on the 1 November 2026 Companies House snapshot. They are shown as <em>succession-exposed or worth an early conversation</em> — not as businesses that are closing. Click a row for what flagged it.</p>
+
+  <div class="chips" id="coFilters"></div>
+  <div class="card">
+    <div class="live">Public data · screened 1 November 2026 snapshot · not verified · not approached</div>
+    <div class="scroll"><table id="coTable"></table></div>
+    <div class="note"><strong>How to read it.</strong> "Strength" counts how many of the leading signals line up — it is a screening aid, not a valuation. The real work starts afterwards: a transferability check, a conflicts check, and finding a named person who knows the owner. Until that route exists, the company is parked, not approached.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">How these 20 were picked</h3>
+    <div class="funnel" id="coFunnel"></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div>
+        <div class="badge b-pass">Included only if</div>
+        <ul style="font-size:13px;margin-top:10px">
+          <li>Active company, not in any insolvency or strike-off process (those are late — see rungs 3–4)</li>
+          <li>Incorporated 2003 or earlier — a long-established owner-managed business</li>
+          <li>Micro, small or unaudited filer — owner-managed, not group-owned</li>
+          <li>A leading signal (accounts overdue, or an owner aged 62+ by inferred band) plus at least two supporting ones</li>
+          <li>No disqualified director, no sign of a recent phoenix company</li>
+        </ul>
+      </div>
+      <div>
+        <div class="badge b-refuse">Deliberately left out</div>
+        <ul style="font-size:13px;margin-top:10px">
+          <li>Names and dates of birth of individuals — shown only as an inferred age band, which must never appear in correspondence</li>
+          <li>Anything implying health, family circumstances or an intention to sell</li>
+          <li>Any company already in formal insolvency</li>
+          <li>Sectors where the value is a personal licence that can't transfer</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top:16px"><strong>Please read.</strong> This list is screened from public Companies House data and is unverified. Nothing here says a company is for sale, in difficulty or about to close, and none of these businesses has been contacted. Sector codes are self-declared and can be wrong, so each would need a second source (website, press, job postings) before any conversation. Company numbers link to the public register so each fact can be checked.</div>
+  </div>
+</div>
+
+<!-- ============ UNDER THE BONNET ============ -->
+<div class="pane" id="p-bonnet">
+  <h2 style="margin-top:34px"><span class="n">08</span>Under the bonnet</h2>
+  <p class="lede">Detail for when you want to test the method rather than just see it. Everything here is collapsed by default.</p>
+
+  <details class="card">
+    <summary>Known pitfalls, written down before launch</summary>
+    <p style="font-size:13.5px;margin-top:12px">These are the failure modes that tend to sink this kind of engine. Each has a rule that blocks it and a test that proves the rule works.</p>
+    <div class="scroll"><table id="defectTable"></table></div>
+  </details>
+
+  <details class="card">
+    <summary>Three sources that don't behave as you'd expect</summary>
+    <div class="grid g3" style="margin-top:14px">
+      <div>
+        <div class="badge b-refuse">Watch-out</div>
+        <h3>HR1 redundancy notices have no company names</h3>
+        <p style="font-size:13px">The UK's strongest early trigger — a statutory 30-day advance notice of closure-scale job losses — is published <strong>only in aggregate</strong>: forms, potential redundancies and unique employers per month, with ONS adding industry and region. No employer names, anywhere, officially.</p>
+        <p style="font-size:13px;margin-bottom:0"><span class="ok">Approach:</span> use the aggregate as a <em>sector heat</em> signal, then resolve named employers from Jobcentre Plus Rapid Response announcements, local press and union statements. Label the result <code>inferred</code>, never <code>confirmed</code>.</p>
+      </div>
+      <div>
+        <div class="badge b-warn">Watch-out</div>
+        <h3>The best signal is filtered out upstream</h3>
+        <p style="font-size:13px">ONS cleans the HR1 data by <strong>dropping</strong> any entry whose reason mentions <em>transfer, move,</em> or <em>TUPE</em> — because those aren't redundancies.</p>
+        <p style="font-size:13px;margin-bottom:0"><span class="ok">Approach:</span> invert the filter. Those entries describe a business or contract moving to a new operator: a live transaction with a completion date that nobody is monitoring.</p>
+      </div>
+      <div>
+        <div class="badge b-info">Edge</div>
+        <h3>The insolvency stream names the gatekeeper</h3>
+        <p style="font-size:13px">The Companies House streaming service pushes formal insolvency events in real time, free. The most valuable field isn't the company — it's the <strong>appointed insolvency practitioner</strong>.</p>
+        <p style="font-size:13px;margin-bottom:0"><span class="ok">Approach:</span> two years of that stream builds a map of who actually gets appointed in your sector and region — assembled from evidence, not a directory.</p>
+      </div>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary>Fee floor — what each deal size does to the practice</summary>
+    <div class="scroll"><table id="bandTable"></table></div>
+    <div class="note" id="bandNote"></div>
+  </details>
+
+  <details class="card">
+    <summary>Registers: UK live, US as a roadmap</summary>
+    <p style="font-size:13.5px;margin-top:12px">Companies House gives the UK a single national census of companies. The US has no equivalent, but its WARN Act publishes named employers 60 days ahead of closure-scale events — something the UK doesn't do at all. <strong>Only the UK is demonstrated here.</strong> The US register set is a later phase.</p>
+    <div class="scroll"><table id="warnTable"></table></div>
+    <div class="chips" id="regFilters"></div>
+    <div class="scroll"><table id="regTable"></table></div>
+    <div class="hr"></div>
+    <h3 style="margin-top:0">UK to US trigger parity</h3>
+    <div class="scroll" id="parityWrap"></div>
+    <div class="note">The officer date-of-birth signal exists only in the UK. It is what makes succession exposure (the largest and least-contested archetype) visible from a register; in the US that archetype has to be reached through accountants and lawyers instead.</div>
+  </details>
+
+  <details class="card">
+    <summary>What "adviser-side only" settles</summary>
+    <div class="grid g3" style="margin-top:14px">
+      <div><div class="badge b-pass">Kept</div><p style="font-size:13px;margin-top:10px"><strong>Closure support stays on the menu.</strong> Helping an owner close properly is what makes you the person the accountant calls first. If you were also a buyer it would be a conflict and would have to go.</p></div>
+      <div><div class="badge b-pass">Works</div><p style="font-size:13px;margin-top:10px"><strong>Insolvency practitioners become a channel.</strong> An adviser who brings a going-concern outcome or a component buyer is useful to them. A principal would just be a competing purchaser.</p></div>
+      <div><div class="badge b-warn">Recommended</div><p style="font-size:13px;margin-top:10px"><strong>A standing conflicts check</strong> before every mandate: who is the buyer, have I met them, am I paid by anyone else in this? Component deals can otherwise put you on both sides of one asset.</p></div>
+    </div>
+  </details>
+</div>
+
+<!-- ============ THE ASK ============ -->
+<h2 id="askTop"><span class="n">09</span>The decision</h2>
+<div class="card ask" id="ask">
+  <p class="lede" style="margin-bottom:16px">A go / no-go on direction. If it is a go, three things to confirm so a build can be scoped. No price is attached to any of them.</p>
+  <div class="grid g3">
+    <div>
+      <div class="badge b-info">Decision 1</div>
+      <h3>The mandate</h3>
+      <p style="font-size:13px">Enterprise value <strong>£1m–£5m</strong>, with a written fee floor of <strong>£30,000</strong> modelled fee. Revisit after twenty live outcomes. This is the band where large firms are structurally absent and the economics of a solo practice still work.</p>
+    </div>
+    <div>
+      <div class="badge b-info">Decision 2</div>
+      <h3>The scope</h3>
+      <p style="font-size:13px"><strong>Adviser-side only. UK first.</strong> US registers stay a roadmap item until the UK engine has produced real introductions. One region and a handful of sectors to begin with.</p>
+    </div>
+    <div>
+      <div class="badge b-info">Decision 3</div>
+      <h3>The next step</h3>
+      <p style="font-size:13px">A short scoping conversation to agree time and budget for a build, using your sectors and fee floor and a first look at your own network against the target list.</p>
+    </div>
+  </div>
+  <details style="margin-top:18px">
+    <summary>What a build would deliver (outline only)</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Weeks</th><th>What you'd have</th></tr></thead>
+      <tbody>
+        <tr><td class="k mono">1</td><td>Mandate written down: fee floor, sectors, region, deal size, archetype priority.</td></tr>
+        <tr><td class="k mono">2–5</td><td>The register feeds: the national company census, the real-time insolvency stream, Gazette notices, and officer and ownership data for the shortlisted universe.</td></tr>
+        <tr><td class="k mono">6–7</td><td>The ten gates with tests, the matcher that stops the same business being approached twice, the scorer and the review queue.</td></tr>
+        <tr><td class="k mono">8–9</td><td>A named gatekeeper map (target 60 people) and warm-path mapping for every company that clears the gates.</td></tr>
+        <tr><td class="k mono">10</td><td>Go live: weekly signal review, first briefings booked, first approaches through named routes.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note">Assumes about one day a week of your time. After launch: a weekly 30-minute review, and a monthly report on fee-floor waivers and data-source health.</div>
+  </details>
+</div>
+
+<div class="foot">
+  <p><strong style="color:var(--ink2)">What is real here.</strong> The gate logic, the scoring and the pipeline model run in your browser on this page. The twenty companies are real, screened on the Companies House bulk snapshot of 1 November 2026 and its public officer and ownership pages. The company records in the gate demo are <strong style="color:var(--ink2)">fictional examples</strong>.</p>
+  <p style="margin-bottom:0"><strong style="color:var(--ink2)">What is not built.</strong> No live connector is running yet. The pipeline numbers are estimates, not measurements, and the scoring weights are uncalibrated until the first twenty live outcomes are recorded. UK GDPR, PECR and professional-conduct points should be reviewed by your own counsel before launch.</p>
+</div>
+
+</div>
+
+<script>
+/* ============================================================
+   WINDPATH — gate logic, scorer, models.
+   Every rule is a pure function: (record, ctx) -> {result, reason}
+   No network, no storage, no model inside a gate.
+   ============================================================ */
+
+const RES = {PASS:'PASS', WARN:'WARN', REFUSE:'REFUSE', HUMAN:'HUMAN'};
+const ok  = (g,r)=>({gate:g,result:RES.PASS,reason:r});
+const wn  = (g,r)=>({gate:g,result:RES.WARN,reason:r});
+const rf  = (g,r)=>({gate:g,result:RES.REFUSE,reason:r});
+const hm  = (g,r)=>({gate:g,result:RES.HUMAN,reason:r});
+
+const CLIENT_NAME = '';   // optional: set to the client's name to personalise the header
+
+const CTX = {
+  feeFloor: 30000,          // £ minimum modelled fee at mandate
+  staleDays: {A1:365, A2:30, A3:90, A4:180, A5:180, A6:90},
+  burnoutDays: 365,
+  employeeCeilingByTurnover: 0.004, // employees per £ of turnover, sanity ceiling
+  clientSide: 'adviser',    // 'adviser' | 'principal'
+  sectorExclusions: ['personal-licence-dependent','untransferable-registration']
+};
+
+/* ---- G1 improper contact ------------------------------- */
+function g1ImproperContact(r){
+  const formal = ['cvl','administration','compulsory-liquidation','receivership','liquidation'];
+  const inFormal = formal.includes(r.status) || r.insolvencyCaseOpen === true;
+  if(!inFormal) return ok('G1','No formal insolvency process. Directors still hold decision rights; owner contact is proper.');
+  if(r.route === 'owner')
+    return rf('G1',`Company is in ${r.status}. Directors' powers have ceased and an officeholder controls the assets. The proposed route is the owner-director — refused as improper. Re-route to the appointed insolvency practitioner${r.ip?': '+r.ip:''}. This is a professional-conduct control, not a data-quality one.`);
+  return wn('G1',`Company is in ${r.status}. Owner route correctly avoided. Contact the appointed officeholder${r.ip?' ('+r.ip+')':''} about component assets only. Recovery will be distressed; re-score factor S.`);
+}
+
+/* ---- G2 cleanliness / do-not-engage -------------------- */
+function g2Cleanliness(r){
+  if(r.directorDisqualified === true)
+    return rf('G2','A director on record is disqualified. Advising on a transaction involving them carries professional and legal exposure. Refused to the review queue.');
+  if(r.phoenixSuspected === true)
+    return rf('G2',`Phoenix indicators present${r.phoenixNote?': '+r.phoenixNote:''}. Distressed targets are disproportionately asset-stripping vehicles. Refused — never deleted; a person decides.`);
+  if(r.wrongfulTradingFlag === true)
+    return rf('G2','Wrongful-trading indicators. Any advice could be construed as facilitating continued trading to the detriment of creditors.');
+  if(r.ethicsFlag) return rf('G2', r.ethicsFlag);
+  return ok('G2','No disqualification, phoenix or wrongful-trading indicators on record.');
+}
+
+/* ---- G3 fee floor -------------------------------------- */
+function g3FeeFloor(r, ctx){
+  if(r.modelledFee == null) return wn('G3','No modelled fee. Cannot test against the floor — supply an EV estimate and a fee assumption before this record leaves the queue.');
+  if(r.modelledFee < ctx.feeFloor){
+    if(r.componentDeals && r.componentDeals.length)
+      return wn('G3',`Whole-company fee £${r.modelledFee.toLocaleString()} is below the £${ctx.feeFloor.toLocaleString()} floor, but ${r.componentDeals.length} component deal(s) may clear it independently. Score the (target, component) pairs before refusing.`);
+    return wn('G3',`Modelled fee £${r.modelledFee.toLocaleString()} is below the £${ctx.feeFloor.toLocaleString()} floor. This is a WARN, not a refusal — but accepting it requires the signed waiver: name, reason, estimated hours, and the named alternative it displaces. If the waiver cannot be written, the gate stands.`);
+  }
+  return ok('G3',`Modelled fee £${r.modelledFee.toLocaleString()} clears the £${ctx.feeFloor.toLocaleString()} floor.`);
+}
+
+/* ---- G4 data quality ----------------------------------- */
+function g4DataQuality(r){
+  if(!r.companyNumber) return rf('G4','No company number. The record cannot be re-fetched or evidenced.');
+  if(!/^[0-9A-Z]{8}$/i.test(String(r.companyNumber))) return rf('G4',`Company number "${r.companyNumber}" is not a valid 8-character UK company number.`);
+  if(r.status === 'dissolved') return rf('G4','Status is dissolved. Not a lead — but it IS a label. Route to the outcomes record rather than the review queue.');
+  if(r.employees != null && r.turnover != null && r.turnover > 0){
+    const ceiling = Math.max(20, r.turnover * CTX.employeeCeilingByTurnover);
+    if(r.employees > ceiling)
+      return rf('G4',`${r.employees.toLocaleString()} employees on £${(r.turnover/1e6).toFixed(2)}m turnover implies £${Math.round(r.turnover/r.employees).toLocaleString()} revenue per head — implausible for SIC ${r.sic||'unknown'}. Probably a units error or a misfiled record. Excluded from scoring until a person reviews it.`);
+  }
+  if(r.sicContradicted) return wn('G4',`SIC ${r.sic} is contradicted by two other sources (${r.sicContradicted}). SIC codes are self-declared at incorporation and rarely updated. Never trust SIC alone.`);
+  if(r.triggerSource === 'hr1-aggregate')
+    return rf('G4','Record is sourced only to aggregate HR1 data, which publishes no employer names. It cannot evidence a company. Resolve a named employer from Rapid Response, local press or a union statement first.');
+  return ok('G4','Company number valid, status live, employee/turnover ratio plausible, SIC corroborated.');
+}
+
+/* ---- G5 entity resolution ------------------------------ */
+const GENERIC = new Set(['logistics','services','service','holdings','holding','group','limited','ltd','llp','plc','inc','incorporated','corporation','corp','the','and','company','co','uk','national','united','premium','global','international','solutions','consulting','management','enterprises','ventures','partners']);
+const WEAK    = new Set(['united','national','premium','global','first','prime','elite','apex','summit','pioneer']);
+
+function normWords(s){
+  return String(s||'').toLowerCase()
+    .replace(/[^a-z0-9\s]/g,' ')
+    .split(/\s+/)
+    .filter(w=>w.length>1 && !GENERIC.has(w) && !WEAK.has(w));
+}
+// typo-tolerant similarity on a single distinctive word
+function sim(a,b){
+  if(a===b) return 1;
+  const m=Math.max(a.length,b.length); if(!m) return 0;
+  // Levenshtein
+  const d=[]; for(let i=0;i<=a.length;i++){d[i]=[i];for(let j=1;j<=b.length;j++)d[i][j]=i===0?j:0;}
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return 1 - d[a.length][b.length]/m;
+}
+/* Whole-string similarity: the standard Ratcliff/Obershelp gestalt measure
+   (2*M/T), implemented to match Python's difflib.SequenceMatcher.ratio().
+   The behaviour that matters: a near-miss on the whole string must never
+   auto-suppress a record. It goes to a person. */
+function gestalt(a,b){
+  if(a===b) return 1;
+  if(!a.length || !b.length) return 0;
+  // b2j: character -> sorted list of indices in b
+  const b2j={};
+  for(let j=0;j<b.length;j++){ (b2j[b[j]]=b2j[b[j]]||[]).push(j); }
+  let total=0;
+  (function rec(lo1,hi1,lo2,hi2){
+    // find_longest_match over the window
+    let besti=lo1, bestj=lo2, bestsize=0;
+    let j2len={};
+    for(let i=lo1;i<hi1;i++){
+      const newj2len={};
+      for(const j of (b2j[a[i]]||[])){
+        if(j<lo2) continue;
+        if(j>=hi2) break;
+        const k=(j2len[j-1]||0)+1;
+        newj2len[j]=k;
+        if(k>bestsize){ besti=i-k+1; bestj=j-k+1; bestsize=k; }
+      }
+      j2len=newj2len;
+    }
+    // extend past exact-match runs on either side (as difflib does)
+    while(besti>lo1 && bestj>lo2 && a[besti-1]===b[bestj-1]){ besti--;bestj--;bestsize++; }
+    while(besti+bestsize<hi1 && bestj+bestsize<hi2 && a[besti+bestsize]===b[bestj+bestsize]) bestsize++;
+    if(bestsize===0) return;
+    total+=bestsize;
+    if(lo1<besti && lo2<bestj) rec(lo1,besti,lo2,bestj);
+    if(besti+bestsize<hi1 && bestj+bestsize<hi2) rec(besti+bestsize,hi1,bestj+bestsize,hi2);
+  })(0,a.length,0,b.length);
+  return 2*total/(a.length+b.length);
+}
+const norm = s => String(s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(Boolean).join(' ');
+
+/* Distinctive-word match. Thresholds: typo tolerance 0.84, shared-word ratio
+   floor 0.50, match score floor 0.62, human-review floor 0.30. Uncalibrated
+   until the first live records are reviewed. */
+function distinctiveMatch(prospect, existing){
+  const pn=norm(prospect), en=norm(existing);
+  const p=normWords(prospect), e=normWords(existing);
+  const whole=+gestalt(pn,en).toFixed(3);
+  if(!p.length || !e.length)
+    return {score:+(0.4*whole).toFixed(3), shared:0, strong:0, ratio:0, whole,
+            verdict:'human', note:'one side has no distinctive words after generic/weak stripping'};
+  let exact=0, strong=0;
+  const sharedWords=[];
+  for(const pw of p){
+    if(e.includes(pw)){ exact++; strong++; sharedWords.push(pw); continue; }
+    // alias containment: a distinctive word is matched inside a longer alias
+    const cont = e.find(ew => ew.length>=5 && pw.length>=5 && (ew.startsWith(pw)||pw.startsWith(ew)));
+    if(cont){ strong++; sharedWords.push(pw+'~'+cont); continue; }
+    let b=0; for(const ew of e){ const s=sim(pw,ew); if(s>b) b=s; }
+    if(b>=0.84){ strong++; sharedWords.push(pw+'≈'+b.toFixed(2)); }
+  }
+  const ratio=+(strong/Math.max(p.length,e.length)).toFixed(3);
+  const score=+(0.6*ratio + 0.4*whole).toFixed(3);
+  let verdict;
+  if(ratio>=0.50 && score>=0.62) verdict='match';
+  else if(score>=0.30)           verdict='human';
+  else                           verdict='none';
+  return {score, shared:exact, strong, ratio, whole, verdict, sharedWords};
+}
+function g5Resolution(r, ctx){
+  if(!ctx.known || !ctx.known.length) return ok('G5','No registry supplied for comparison.');
+  let bestHuman=null;
+  for(const k of ctx.known){
+    if(k.number && r.companyNumber && k.number===r.companyNumber)
+      return rf('G5',`Same company number as "${k.name}" (${k.why||'already in registry'}). Exact duplicate.`);
+    const m = distinctiveMatch(r.name, k.name);
+    if(m.verdict==='match'){
+      if(k.kind==='group')
+        return hm('G5',`Distinctive-word match against "${k.name}" — ${m.strong} shared distinctive word(s), ratio ${m.ratio} ≥ 0.50, score ${m.score} ≥ 0.62. This looks like a GROUP structure, not a duplicate. Do not suppress: consolidate the cluster to one group parent and score the parent once. Holding for a person to confirm the group boundary.`);
+      return rf('G5',`Distinctive-word match against "${k.name}" — ${m.strong} shared distinctive word(s), ratio ${m.ratio} ≥ 0.50, score ${m.score} ≥ 0.62. Suppressed as ${k.why||'existing'}${k.aliasNote?', matched via alias '+k.aliasNote:''}. Kept in the review queue with the matching alias shown.`);
+    }
+    if(m.verdict==='human' && (!bestHuman || m.score>bestHuman.m.score)) bestHuman={k,m};
+  }
+  if(bestHuman)
+    return hm('G5',`Fuzzy proximity to "${bestHuman.k.name}" — whole-string similarity ${bestHuman.m.whole}, distinctive score ${bestHuman.m.score}, ${bestHuman.m.strong} shared distinctive word(s). Below the match floor of 0.62. FUZZY SIMILARITY ALONE NEVER SUPPRESSES. This goes to a person, who can see in seconds what a string metric got wrong.`);
+  return ok('G5','No exact-number duplicate, no distinctive-word match, and no fuzzy proximity above the review floor against the registry.');
+}
+
+/* ---- G6 competing adviser ------------------------------ */
+function g6CompetingAdviser(r){
+  if(r.agentInstructed)
+    return wn('G6',`A ${r.agentType||'transfer agent'} is already instructed${r.listingAge?` and the listing is ${r.listingAge} old`:''}. Deprioritise — but do not refuse. Agent processes stall at a predictable rate, and a stale listing is a live opportunity. Re-check at 90 days.`);
+  if(r.ipSoftAppointed)
+    return wn('G6','An insolvency practitioner has been softly engaged pre-appointment. The window is open but narrow, and the IP is now the gatekeeper — route through them, not around them.');
+  return ok('G6','No adviser, agent or officeholder instructed. This is rung 0–2: the whitespace.');
+}
+
+/* ---- G7 staleness -------------------------------------- */
+function g7Staleness(r, ctx){
+  if(r.triggerAgeDays == null) return wn('G7','No trigger age recorded. Every record must carry the date its trigger was observed, or latency cannot be measured.');
+  const limit = ctx.staleDays[r.archetype] ?? 180;
+  if(r.triggerAgeDays > limit)
+    return rf('G7',`Trigger observed ${r.triggerAgeDays} days ago; the ${r.archetype} staleness limit is ${limit} days. Refused to the archive — not deleted. An ${r.archetype} situation moves faster than that, and the record no longer describes the world.`);
+  if(r.triggerAgeDays > limit*0.6)
+    return wn('G7',`Trigger is ${r.triggerAgeDays} days old against a ${limit}-day ${r.archetype} limit. Re-verify before approaching.`);
+  return ok('G7',`Trigger observed ${r.triggerAgeDays} days ago, inside the ${limit}-day ${r.archetype} window.`);
+}
+
+/* ---- G8 burn-out --------------------------------------- */
+function g8Burnout(r, ctx){
+  if(r.lastApproachedDaysAgo != null && r.lastApproachedDaysAgo < ctx.burnoutDays)
+    return rf('G8',`This decision-maker was approached ${r.lastApproachedDaysAgo} days ago. The burn-out window is ${ctx.burnoutDays} days. A second approach burns the relationship for no incremental information.`);
+  if(r.gatekeeperAsksThisQuarter >= 2)
+    return rf('G8',`The routing gatekeeper has been asked ${r.gatekeeperAsksThisQuarter} times this quarter. Limit is one. Your personal network is finite and non-renewable.`);
+  return ok('G8','No prior approach inside the burn-out window; gatekeeper ask count within limit.');
+}
+
+/* ---- G9 personal data / UK GDPR ------------------------ */
+function g9PersonalData(r){
+  const special = ['health','illness','diagnosis','disability','family-breakdown','divorce','bereavement','marriage','religion','ethnicity','criminal-offence'];
+  const hits = (r.triggerEvidence||[]).map(String).flatMap(t=>t.toLowerCase().split(/[\s,;.]+/)).filter(w=>special.includes(w.replace(/[^a-z-]/g,'')));
+  if(r.archetype === 'A6' && r.source !== 'referral')
+    return rf('G9','Archetype A6 (forced personal: ill health, divorce, bereavement, partnership dispute) is REFERRAL-ONLY. The engine must never infer, store or act on special-category data. If this record did not arrive from a named human, it is refused permanently — not queued, not re-scored.');
+  if(hits.length)
+    return rf('G9',`Trigger evidence contains special-category indicators (${hits.join(', ')}). Hard refuse. These are genuine closure drivers and simultaneously data the engine is not permitted to process. Route: referral or nothing.`);
+  if(r.ageBand && r.route==='owner' && r.archetype==='A1' && r.track!=='nurture')
+    return wn('G9','Age band is being used to drive a transactional approach. Age is a NURTURE signal, never a distress signal, and officer date of birth is only ever a month-year band. It must not appear in correspondence. Move this record to the nurture track.');
+  return ok('G9','No special-category data. Lawful basis for B2B contact documented; retention set; opt-out available.');
+}
+
+/* ---- G10 sector / structural exclusion ----------------- */
+function g10SectorExclusion(r){
+  if(r.valueIsPersonalLicence === true)
+    return rf('G10','The value of this business sits in a PERSONAL licence or registration that cannot transfer to a buyer. There is nothing to sell. Scoring it low is not enough — it is excluded outright.');
+  if(r.untransferableRegistration)
+    return rf('G10',`Registration ${r.untransferableRegistration} requires a fitness test the buyer cannot pass, or is entity-and-person specific. Excluded.`);
+  if(r.singleClientTerminated)
+    return rf('G10','Sole or dominant client has already terminated. The going-concern value has gone; what remains is an asset disposal, which belongs to an IP, not to a sale process.');
+  if(r.keyPersonIsTheBusiness && !r.teamTransferable)
+    return wn('G10','Value is substantially in one person who is the reason the business is closing. Transferability is doubtful — check whether a component (client relationships, approvals, order book) survives their departure.');
+  return ok('G10','Not on the must-never-target list. Value is separable from the individual owner.');
+}
+
+/* ---- pipeline ------------------------------------------ */
+const GATES = [g1ImproperContact,g2Cleanliness,g3FeeFloor,g4DataQuality,g5Resolution,g6CompetingAdviser,g7Staleness,g8Burnout,g9PersonalData,g10SectorExclusion];
+const SEVERITY = {REFUSE:3, HUMAN:2, WARN:1, PASS:0};
+
+function evaluate(r, ctx){
+  const results = GATES.map(g=>g(r,ctx));
+  const flagged = results.filter(x=>x.result!==RES.PASS);
+  // the DECIDING gate: the most severe non-pass. When everything passes there is
+  // no deciding gate, and none is reported — a clean record is not attributed to G1.
+  const worst = flagged.length
+    ? flagged.reduce((a,b)=>SEVERITY[b.result]>SEVERITY[a.result]?b:a)
+    : {gate:null, result:RES.PASS, reason:'All ten gates pass.'};
+  let disposition, route;
+  if(worst.result===RES.REFUSE){
+    disposition = `REFUSED (${worst.gate}) → review queue with reason. Never deleted.`;
+    route = 'none — a person decides';
+  } else if(worst.result===RES.HUMAN){
+    disposition = `HELD (${worst.gate}) → human decision. Fuzzy similarity alone never suppresses.`;
+    route = 'pending human confirmation';
+  } else {
+    const warns = results.filter(x=>x.result===RES.WARN).map(x=>x.gate);
+    disposition = warns.length ? `CLEARED with warnings: ${warns.join(', ')}` : 'CLEARED — all ten gates pass';
+    if(r.status && ['cvl','administration','compulsory-liquidation','receivership','liquidation'].includes(r.status)) route = `appointed officeholder${r.ip?' ('+r.ip+')':''}`;
+    else if(r.warmPath && r.warmPath.type==='1st') route = `direct, via ${r.warmPath.who}`;
+    else if(r.warmPath && r.warmPath.type==='2nd') route = `introduced by ${r.warmPath.who}`;
+    else if(r.warmPath && r.warmPath.type==='gatekeeper') route = `brief ${r.warmPath.who}, let them introduce`;
+    else route = 'NONE — park it and work the gatekeeper ring instead';
+  }
+  return {results, worst, disposition, route};
+}
+
+/* ---- fixtures (all fictional; shown in the gate demo only) ---- */
+const FIXTURES = {
+  hargreaves: {
+    label:'Succession-exposed owner · clean pass',
+    r:{name:'Hargreaves Precision Components Ltd', companyNumber:'04821997', status:'active', sic:'25620',
+       archetype:'A1', rung:0, turnover:2400000, employees:31, modelledFee:52000,
+       controllingOfficerAgeBand:'65-69', controllingOfficerPSCPct:100, successorVisible:false,
+       trigger:'controlling director age band 65-69, PSC 100%, no younger officer and no shared surname',
+       triggerAgeDays:11, triggerSource:'companies-house-officers', track:'nurture',
+       warmPath:{type:'gatekeeper', who:'their accountant (ring 2)'}}
+  },
+  pilling: {
+    label:'Elderly chairman, young MD · must not flag',
+    r:{name:'Pilling Engineering Holdings Ltd', companyNumber:'02771450', status:'active', sic:'25620',
+       archetype:'A1', rung:0, turnover:8100000, employees:64, modelledFee:180000,
+       controllingOfficerAgeBand:'40-44', controllingOfficerPSCPct:75, successorVisible:true,
+       eldestOfficerAgeBand:'80-84', eldestOfficerRole:'Non-executive chairman', eldestOfficerPSCPct:0,
+       trigger:'eldest officer age band 80-84 — but that officer is a non-exec chair holding no PSC interest',
+       triggerAgeDays:11, triggerSource:'companies-house-officers', track:'nurture',
+       warmPath:{type:'2nd', who:'a former KPMG peer, now FD at a supplier'}}
+  },
+  meridian: {
+    label:'Already in liquidation · owner route blocked',
+    r:{name:'Meridian Logistics (North West) Ltd', companyNumber:'07442118', status:'cvl', ip:'the appointed insolvency practitioner (named in the Gazette notice)',
+       sic:'49410', archetype:'A2', rung:4, turnover:6300000, employees:88, modelledFee:31000,
+       route:'owner', insolvencyCaseOpen:true, componentDeals:['vehicle fleet','3PL contracts','depot lease'],
+       trigger:'insolvency-cases stream: CVL, liquidator appointed 3 days ago', triggerAgeDays:3,
+       triggerSource:'ch-streaming', warmPath:{type:'gatekeeper', who:'the liquidator'}}
+  },
+  ashford: {
+    label:'Looks like a phoenix company · refused',
+    r:{name:'Ashford Groundworks & Civils Ltd', companyNumber:'15220934', status:'active', sic:'43120',
+       archetype:'A2', rung:1, turnover:1900000, employees:22, modelledFee:28000,
+       phoenixSuspected:true, phoenixNote:'incorporated 4 months after the dissolution of Ashford Groundworks Ltd (09114227), same registered office, same SIC, two overlapping directors',
+       trigger:'new incorporation at a recently dissolved address, matching SIC', triggerAgeDays:26,
+       triggerSource:'gazette+ch', warmPath:{type:'none'}}
+  },
+  thornbury: {
+    label:'Venture wind-down · below fee floor',
+    r:{name:'Thornbury Digital Analytics Ltd', companyNumber:'10884203', status:'active', sic:'62012',
+       archetype:'A3', rung:2, turnover:410000, employees:14, modelledFee:12000,
+       componentDeals:['codebase / IP','3 enterprise contracts','team of 6 engineers'],
+       trigger:'founder public shutdown post naming what is transferable; job postings withdrawn 40 days ago',
+       triggerAgeDays:9, triggerSource:'press+jobboards', warmPath:{type:'1st', who:'the founder (a former colleague)'}}
+  },
+  bramall: {
+    label:'Impossible figures · data-quality refusal',
+    r:{name:'Bramall Artisan Bakery Ltd', companyNumber:'09113776', status:'active', sic:'10710',
+       archetype:'A4', rung:1, turnover:820000, employees:5000, modelledFee:22000,
+       sicContradicted:'website describes 2 shops; Companies House SIC says manufacture of bread',
+       trigger:'HR1 sector heat: bakery & farinaceous products, North West', triggerAgeDays:20,
+       triggerSource:'ons-hr1-industry', warmPath:{type:'none'}}
+  },
+  hr1: {
+    label:'Only aggregate redundancy data · no company',
+    r:{name:'[unresolved — HR1 sector heat]', companyNumber:'NO-NUMBER', status:'unknown', sic:'49410',
+       archetype:'A2', rung:2, triggerSource:'hr1-aggregate',
+       trigger:'ONS HR1: transport & storage, Yorkshire & Humber, 41 potential redundancies, September 2026. No employer name exists in the published data.',
+       triggerAgeDays:5, warmPath:{type:'none'}}
+  },
+  versa: {
+    label:'Near-miss name vs an existing client · held for a person',
+    r:{name:'Versa Facilities Management Ltd', companyNumber:'11220884', status:'active', sic:'81100',
+       archetype:'A4', rung:1, turnover:3100000, employees:120, modelledFee:64000,
+       trigger:'accounts filed 4 months late; two director resignations in 90 days', triggerAgeDays:14,
+       triggerSource:'ch-filing-history', warmPath:{type:'gatekeeper', who:'their auditor (ring 2)'},
+       _registry:[{name:'Versaline Packaging Ltd', number:'08842001', kind:'client', why:'an existing client of the practice'}]}
+  },
+  greenfield: {
+    label:'Fee far below the floor · needs a signed waiver',
+    r:{name:'Greenfield Groundworks Ltd', companyNumber:'06612280', status:'active', sic:'43120',
+       archetype:'A1', rung:0, turnover:340000, employees:6, modelledFee:6000,
+       controllingOfficerAgeBand:'70-74', controllingOfficerPSCPct:100, successorVisible:false, track:'nurture',
+       trigger:'controlling officer age band 70-74, sole director, no successor', triggerAgeDays:40,
+       triggerSource:'companies-house-officers', warmPath:{type:'gatekeeper', who:'their bookkeeper (ring 2)'}}
+  },
+  kingsway: {
+    label:'Stale signal · refused to archive',
+    r:{name:'Kingsway Retail Group Ltd', companyNumber:'05518822', status:'active', sic:'47190',
+       archetype:'A4', rung:2, turnover:12400000, employees:210, modelledFee:240000,
+       trigger:'HR1 notification (resolved via local press) — observed 14 months ago', triggerAgeDays:426,
+       triggerSource:'press', warmPath:{type:'2nd', who:'a former colleague, now at their bank'}}
+  },
+  northgate: {
+    label:'Contact fatigue · gatekeeper already asked twice',
+    r:{name:'Northgate Foods Manufacturing Ltd', companyNumber:'03391776', status:'active', sic:'10850',
+       archetype:'A5', rung:1, turnover:28000000, employees:340, modelledFee:520000,
+       trigger:'PE owner pruning a non-core unit; FD departed 60 days ago', triggerAgeDays:60,
+       triggerSource:'linkedin+ch', lastApproachedDaysAgo:140, gatekeeperAsksThisQuarter:2,
+       warmPath:{type:'gatekeeper', who:'the outgoing CFO'}}
+  },
+  lomond: {
+    label:'Franchise group of 14 entities · consolidate, don\'t duplicate',
+    r:{name:'Lomond Retail Group Ltd', companyNumber:'08114885', status:'active', sic:'47110',
+       archetype:'A4', rung:1, turnover:41000000, employees:610, modelledFee:680000,
+       trigger:'three of fourteen same-surname subsidiary entities filed accounts late in the same quarter',
+       triggerAgeDays:22, triggerSource:'ch-bulk',
+       warmPath:{type:'2nd', who:'a former colleague on the group audit team'},
+       _registry:[{name:'Lomond Retail (Scotland) Ltd', number:'SC442119', kind:'group', why:'another entity in the same group', aliasNote:'shared distinctive word "lomond"'},
+                  {name:'Lomond Convenience Holdings Ltd', number:'09988112', kind:'group', why:'group parent'}]}
+  },
+  calder: {
+    label:'Component deals · clean pass',
+    r:{name:'Calder Vale Brewing Co Ltd', companyNumber:'07712004', status:'active', sic:'11050',
+       archetype:'A4', rung:1, turnover:1800000, employees:19, modelledFee:46000,
+       componentDeals:['brand & trademarks','tie-house tenancies','plant and bottling line'],
+       trigger:'lease break exercised on the production site; two regional competitors acquired in 18 months',
+       triggerAgeDays:17, triggerSource:'landregistry+ch', warmPath:{type:'gatekeeper', who:'the trade body (ring 6)'}}
+  }
+};
+
+/* ---- TITASC -------------------------------------------- */
+const FACTORS = [
+  {k:'T', n:'Transferability', w:4, gate:true, d:'Can the value actually move? Contracts, TUPE, licences, IP ownership, tenure, key-person.'},
+  {k:'I', n:'Inherent value', w:3, gate:false, d:'Recurring revenue, concentration, data, team, approvals, brand, order book.'},
+  {k:'M', n:'Timing / runway', w:3, gate:false, d:'Rung on the ladder, days to a hard date, decision made vs contemplated.'},
+  {k:'A', n:'Accessibility', w:4, gate:false, d:'Named warm path, gatekeeper, who holds decision rights, competing adviser.'},
+  {k:'S', n:'Size vs fee floor', w:2, gate:false, d:'EV band, fee at mandate, estimated hours against the written floor.'},
+  {k:'C', n:'Cleanliness', w:3, gate:true, d:'Disqualifications, phoenix risk, wrongful trading, fitness tests, conflicts.'}
+];
+const BANDS = [[75,'A — work now. Named route, brief written this week.', 'pass'],
+               [60,'B — viable. Needs one gap closed before it is worth an approach.','warn'],
+               [45,'C — park. Route to a gatekeeper ring and re-check quarterly.','warn'],
+               [0, 'D — do not pursue. Not dealable at this stage.','refuse']];
+
+/* ---- triggers ------------------------------------------ */
+const TRIGGERS = [
+  {band:1,lead:'12–36 mo',name:'Controlling director aged 62+, no visible successor',src:'Companies House officers (date_of_birth month+year) + PSC register',acc:'REST API. Officers BULK file is NOT public — must be requested from CH.',cost:'Free',fp:'High',arch:'A1',gate:'Require PSC ≥50% + age band + no successor. Nurture track only.'},
+  {band:1,lead:'6–24 mo',name:'Sector in structural decline',src:'Free Company Data Product — SIC + geography',acc:'Monthly ZIP, ~471MB',cost:'Free',fp:'Med',arch:'A4',gate:'SIC alone never fires. Corroborate with a second source.'},
+  {band:1,lead:'3–12 mo',name:'Accounts overdue and not filed',src:'Free Company Data Product — AccountsDueDate vs AccountsLastMadeUpDate',acc:'Monthly ZIP',cost:'Free',fp:'Med',arch:'A1 A2',gate:'Cheap, high-volume, underrated. Late filing carries automatic penalties.'},
+  {band:1,lead:'6–12 mo',name:'Lease break or expiry inside 12 months',src:'Land Registry; commercial agents; CoStar',acc:'Mixed',cost:'££',fp:'High',arch:'A1 A2 A4',gate:'Corroborate with agent marketing of the premises.'},
+  {band:1,lead:'—',name:'Serial acquirer active in the same SIC + geography',src:'Companies House filing history; announcements',acc:'API / news',cost:'Free',fp:'—',arch:'A4 A5',gate:'BUYER-SIDE signal. Pre-warm the acquirer before the target appears.'},
+  {band:2,lead:'30–45 days',name:'HR1 advance redundancy notification (20+ at one establishment)',src:'Insolvency Service RPS database',acc:'AGGREGATE ONLY on GOV.UK; ONS adds industry + region. No employer names.',cost:'Free',fp:'Low (aggregate)',arch:'A2 A3 A4 A5',gate:'Composite resolver: aggregate as sector heat, names from Rapid Response / press / unions. Label inferred.'},
+  {band:2,lead:'6–10 wks',name:'Winding-up petition advertised',src:'The Gazette; Insolvency & Companies Court daily lists',acc:'Gazette linked-data REST API',cost:'Free',fp:'Low',arch:'A2',gate:'Verify the debt is not disputed.'},
+  {band:2,lead:'60–180 days',name:'CCJ registered',src:'Registry Trust / TrustOnline; credit agencies',acc:'Paid',cost:'£',fp:'Low',arch:'A2',gate:'Threshold on value and count. One small CCJ is noise.'},
+  {band:2,lead:'60–365 days',name:'New debenture or charge registered',src:'Companies House charges + Streaming API',acc:'Free, real-time',cost:'Free',fp:'Low',arch:'A2 A5',gate:'A charge from a non-bank lender is far stronger than a bank refinancing.'},
+  {band:2,lead:'30–120 days',name:'Director resignation cluster',src:'Streaming API companies stream',acc:'Free, real-time',cost:'Free',fp:'Med',arch:'A2 A6',gate:'Strongest when the resigning director is also a PSC.'},
+  {band:2,lead:'30–90 days',name:'Finance director or controller departs',src:'LinkedIn; Companies House officer changes',acc:'Paid / manual',cost:'££',fp:'Low',arch:'A2 A5',gate:'High value, low volume. Worth a manual watch on 50 companies.'},
+  {band:2,lead:'30–120 days',name:'Hiring freeze; postings withdrawn',src:'Job boards; LinkedIn headcount',acc:'Paid (Revelio / Thinknum) or manual',cost:'££',fp:'High',arch:'A3 A4',gate:'Weak alone. Never a primary trigger.'},
+  {band:2,lead:'30–365 days',name:'Business listed for sale',src:'BusinessTransfer, RightBusiness, Daltons, Christie & Co, Kingsbridge, Hilton Smythe',acc:'Scrape / manual / agent relationship',cost:'£',fp:'Low FP, HIGH lateness',arch:'A1 A4 A5',gate:'Already decided, already instructed. Confirmation and a gatekeeper channel — not discovery.'},
+  {band:2,lead:'60–180 days',name:'Franchise resale advertised',src:'Franchise portals; the franchisor',acc:'Manual',cost:'£',fp:'Low',arch:'A1 A4',gate:'Franchisor consent is a transferability constraint — check before approaching.'},
+  {band:2,lead:'14–90 days',name:'Public "closing down" announcement',src:'Company site, social, local press',acc:'Custom monitoring / alerts',cost:'Free',fp:'Low',arch:'A3 A4 A6',gate:'A3 shutdown posts often name what is transferable. Read them fully.'},
+  {band:2,lead:'30–120 days',name:'Change-of-use planning application on trading premises',src:'Local authority planning portals',acc:'Scrape / API',cost:'Free',fp:'Med',arch:'A4',gate:'Lagging, but confirms — and identifies the next occupier as a consolidator.'},
+  {band:2,lead:'30–90 days',name:'Licence or registration surrender / transfer',src:'CQC, Ofsted, DVSA, FCA register, SIA, licensing authorities, waste carriers',acc:'Public registers, mixed APIs',cost:'Free–£',fp:'Low',arch:'A2 A4 A6',gate:'Often the entire value. G10 decides whether it can transfer at all.'},
+  {band:2,lead:'60–180 days',name:'Move to dormant accounts or filing-exemption change',src:'Companies House filing history + exemptions',acc:'API / Streaming',cost:'Free',fp:'Med',arch:'A1 A4',gate:'Strong pre-strike-off signal.'},
+  {band:2,lead:'60–240 days',name:'Registered office / accountant changed to a low-cost provider',src:'Companies House filing history',acc:'API',cost:'Free',fp:'Med',arch:'A2',gate:'Cheap signal. Regional firm → £200 online accountant correlates with cost pressure.'},
+  {band:2,lead:'—',name:'BBL / CBILS enforcement or National Asset Sales activity',src:'Press; BBLS data; bank announcements',acc:'Manual',cost:'Free',fp:'Med',arch:'A2',gate:'Personal-guarantee exposure changes the owner\'s incentive to transact.'},
+  {band:3,lead:'2 months',name:'Strike-off application (DS01) / first Gazette notice',src:'The Gazette; company-status "active – proposal to strike off"',acc:'Free, real-time',cost:'Free',fp:'Med',arch:'A1 A4',gate:'LAST usable moment. The company may still be trading — check before refusing.'},
+  {band:3,lead:'0 days',name:'Insolvency case opened (administration / CVL / receivership)',src:'Companies House STREAMING API — insolvency-cases',acc:'Free, real-time, with timepoint catch-up',cost:'Free',fp:'Low',arch:'A2',gate:'Names the appointed IP — the most valuable field in the dataset. G1 re-routes automatically.'},
+  {band:3,lead:'terminal',name:'Dissolution',src:'The Gazette; Companies House dissolved search index',acc:'Free',cost:'Free',fp:'—',arch:'all',gate:'NOT A LEAD. A LABEL. Feed it to the outcome set.'}
+];
+
+const PITFALLS = [
+  {t:'The visible list is the late list',s:'Every company found is already instructed',c:'Public signals fire late in the sequence',f:'Weight leading signals. Treat for-sale listings and strike-off notices as confirmation, not discovery.',r:'At least half of first contacts at rung 2 or earlier'},
+  {t:'Industry codes lie',s:'Targets in the wrong industry',c:'SIC codes are self-declared at incorporation and rarely updated',f:'Never use the code alone. Require a second source: website, job postings or revenue band.',r:'A bakery recorded with 5,000 staff on £820k turnover is refused'},
+  {t:'Age is not distress',s:'Retirement-stage owners receive distress messaging',c:'Succession risk confused with insolvency risk',f:'Age signals route to a quiet, useful nurture track only — separate copy, separate cadence. Age never appears in correspondence.',r:'No succession target ever receives an insolvency template'},
+  {t:'The 80-year-old non-exec',s:'Age flag fires on a chairman while the operator is 45',c:'Oldest officer is not the controlling person',f:'The aged officer must also hold at least 50% as a person with significant control, or be the sole director.',r:'Chair 80-84 plus MD 40-44 must not flag on age'},
+  {t:'Phoenix companies',s:'You end up advising an asset-stripping vehicle',c:'Distressed targets are disproportionately phoenixes',f:'Address match, sector match and incorporation within 12 months of a related dissolution all trigger a refusal.',r:'Two companies, same address and sector, four months apart: refused'},
+  {t:'Fee-floor erosion',s:'Year one fills with £6k mandates',c:'Income pressure. Guidelines yield; gates do not.',f:'The fee floor is a gate with a signed waiver: name, reason, estimated hours, and the named alternative it displaces.',r:'Waiver count reported monthly; no undocumented acceptances'},
+  {t:'Burning the network',s:'Introductions stop arriving',c:'A finite network spent on poor-fit targets',f:'A burn-out gate, a yield metric per gatekeeper, and never sending a gatekeeper a target below the floor.',r:'No gatekeeper is asked twice in a quarter'},
+  {t:'Company names that are not in the data',s:'The strongest early signal has nobody attached to it',c:'Redundancy notices are published only in aggregate; names are not released',f:'No company-level feed can exist. Use the aggregate as sector heat, find names from press and Rapid Response, and label the result inferred.',r:'A record sourced only to aggregate data can never reach an approach'}
+];
+
+const GKRINGS = [
+  {r:'1 · Own network',who:'KPMG alumni in corp-dev, PE, law, industry and their own firms; former clients; former colleagues',why:'Trust already exists. The only channel that produces rung-0 introductions.',needs:'A one-page positioning, a reason to think of him, and fast competent handling that makes the referrer look good.',vol:'Highest trust · FINITE',risk:'Burn-out (G8)'},
+  {r:'2 · Accountants',who:'Regional 10–100 partner firms; sole practitioners with owner-managed client bases',why:'They know first. They are not equipped to run a sale, and they dread being the person who suggests liquidation.',needs:'A named contact, a 20-minute briefing, a written referral protocol, and feedback on every referral — win or lose.',vol:'HIGHEST · 20 firms × 2/quarter = 160/yr',risk:'—'},
+  {r:'3 · Insolvency practitioners',who:'The 40–60 most active in your region and sector',why:'Appointed too late to save value. Their reputation depends on outcomes, so a buyer or adviser who appears BEFORE appointment is genuinely useful.',needs:'A pre-appointment route: "if it is not recoverable, here is who can buy the components." Also component buyers for assets already being marketed.',vol:'High · buildable AUTOMATICALLY from the streaming API',risk:'G1'},
+  {r:'4 · Lenders',who:'Bank RMs; asset-based lenders; distressed debt funds; holders of the BBL book',why:'They want recovery, not liquidation. A going-concern outcome beats an asset sale every time.',needs:'Evidence of completed outcomes; speed of response.',vol:'Med-high · slower to build',risk:'—'},
+  {r:'5 · Lawyers',who:'Corporate, employment, family and licensing solicitors; landlords\' agents; HR consultants; tax advisers',why:'Situations reach their desk before an accountant\'s. Family and licensing lawyers see A6 first.',needs:'Reciprocity — send work back.',vol:'Med · highest quality per introduction',risk:'G9'},
+  {r:'6 · Sector institutions',who:'Trade bodies, franchise associations, sector groups, regional growth hubs',why:'They see structural decline (A4) across dozens of members simultaneously.',needs:'A useful talk, a sector paper, an aggregate view they cannot produce themselves.',vol:'Low volume · high leverage for roll-ups',risk:'—'}
+];
+
+const RUNGS = [
+  {n:0,t:'Silent decision',s:'Owner has decided. Nothing public.',vis:'NOTHING',val:100,save:'Full going-concern value. Trade sale, MBO, earn-out, managed exit.',who:'Nobody. This is the whitespace.',tier:0,rule:'Reached only through gatekeeper rings 1, 2 and 5. The engine cannot detect this — it can only make the client the obvious person to call.'},
+  {n:1,t:'Soft signal',s:'Behaviour changed; the decision may not be explicit.',vis:'Late accounts, hiring freeze, lease non-renewal, key staff leaving, director resignations, new charges',val:88,save:'Full or near-full value. The owner still believes it is saleable.',who:'The owner\'s accountant, if they are brave.',tier:0,rule:'Primary engine band. Corroborate two independent signals before an approach. Nurture track for A1.'},
+  {n:2,t:'Open distress',s:'Cash is the binding constraint. The owner is scared and googling.',vis:'CCJs, winding-up petitions, HR1 filed, BBL enforcement, supplier statements',val:64,save:'Value, but on a 30–90 day clock. Accelerated trade sale, pre-pack marketing, asset deal.',who:'Restructuring boutiques, IPs doing informal work, debt-advice lead-gen farms.',tier:0,rule:'Speed beats everything. Verify the debt is not disputed. Lead with the counterfactual, not a pitch.'},
+  {n:3,t:'Adviser engaged',s:'The owner has instructed someone.',vis:'IP soft appointment, agent listing appears',val:41,save:'Depends entirely on WHO they instructed. A sale process preserves value; a liquidator does not.',who:'Whoever they already instructed. You are now late.',tier:1,rule:'G6 deprioritises but does not refuse — processes stall. Re-check a stale listing at 90 days.'},
+  {n:4,t:'Formal insolvency',s:'Administration, CVL, receivership. Directors\' powers have ceased.',vis:'Gazette notices, Companies House insolvency cases, streaming events',val:19,save:'Assets only, at distressed recovery. Employees and the customer book may be salvageable as components.',who:'The IP\'s own buyer network, pre-pack purchasers, auction houses.',tier:1,rule:'G1 REFUSES any owner route. Contact the officeholder about components only. Approaching an owner here is improper, not merely late.'},
+  {n:5,t:'Dissolution',s:'Strike-off, liquidation complete, assets sold.',vis:'Dissolution notice, dissolved search index',val:0,save:'Nothing.',who:'Nobody.',tier:0,rule:'Not a lead — a LABEL. Feed it to the outcomes record so the model can learn which signals predicted it.'}
+];
+
+/* ================= RENDER ================= */
+const $ = s=>document.querySelector(s);
+const $$ = s=>[...document.querySelectorAll(s)];
+
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function badge(res){
+  const m={PASS:'b-pass',WARN:'b-warn',REFUSE:'b-refuse',HUMAN:'b-info'};
+  return `<span class="badge ${m[res]||'b-mute'}">${res}</span>`;
+}
+
+/* --- tabs --- */
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.classList.remove('on'));
+  $$('.pane').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  $('#p-'+b.dataset.t).classList.add('on');
+}));
+
+/* --- ladder --- */
+function renderLadder(){
+  $('#ladder').innerHTML = RUNGS.map(r=>`
+    <div class="rung" data-r="${r.n}" style="cursor:pointer">
+      <div class="rn">${r.n}</div>
+      <div><div class="rt">${r.t}</div><div class="rs">${r.s}</div></div>
+      <div class="r3">
+        <div class="rd"><strong style="color:var(--ink3);font-family:var(--mono);font-size:10px;letter-spacing:.1em">VISIBLE:</strong> ${esc(r.vis)}</div>
+        <div class="rd" style="margin-top:5px"><strong style="color:var(--ink3);font-family:var(--mono);font-size:10px;letter-spacing:.1em">COMPETING:</strong> ${esc(r.who)}</div>
+      </div>
+      <div class="r4">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink3)">recoverable</div>
+        <div class="bar"><i style="width:${r.val}%;background:${r.val>60?'var(--pass)':r.val>30?'var(--warn)':'var(--refuse)'}"></i></div>
+        <div style="font-family:var(--mono);font-size:16px;margin-top:6px;color:${r.val>60?'var(--pass)':r.val>30?'var(--warn)':'var(--refuse)'}">${r.val}%</div>
+        ${r.tier?`<div class="badge b-mute" style="margin-top:7px">tier-1 enters</div>`:''}
+      </div>
+    </div>`).join('');
+  $$('.rung').forEach(el=>el.addEventListener('click',()=>{
+    const r=RUNGS.find(x=>x.n==el.dataset.r); const d=$('#rungDetail');
+    d.style.display='block';
+    d.innerHTML=`RUNG ${r.n} — ${r.t.toUpperCase()}\n\nWhat can still be saved : ${r.save}\nRouting rule           : ${r.rule}`;
+  }));
+}
+
+/* --- gates --- */
+let current='hargreaves';
+function renderPresets(){
+  $('#presets').innerHTML = Object.entries(FIXTURES).map(([k,f])=>
+    `<button data-k="${k}" class="${k===current?'on':''}">${esc(f.label)}</button>`).join('');
+  $$('#presets button').forEach(b=>b.addEventListener('click',()=>{current=b.dataset.k;renderPresets();loadRecord();}));
+}
+function loadRecord(){
+  const r = JSON.parse(JSON.stringify(FIXTURES[current].r));
+  if(r._registry){ r.__registry=r._registry; delete r._registry; }
+  $('#recIn').value = JSON.stringify(r,null,2);
+  runGates();
+}
+function runGates(){
+  let r;
+  try{ r = JSON.parse($('#recIn').value); }
+  catch(e){ $('#gateOut').innerHTML=`<div class="verdict refuse"><span class="badge b-refuse">parse error</span><div class="reason">${esc(e.message)}</div></div>`; $('#gateVerdict').innerHTML=''; $('#routeOut').innerHTML=''; return; }
+  const ctx = Object.assign({}, CTX, {known: r.__registry||[]});
+  const ev = evaluate(r, ctx);
+  $('#gateOut').innerHTML = `<table><thead><tr><th style="width:52px">Gate</th><th style="width:78px">Result</th><th>Reason</th></tr></thead><tbody>` +
+    ev.results.map(x=>{
+      const names={G1:'Improper contact',G2:'Cleanliness',G3:'Fee floor',G4:'Data quality',G5:'Entity resolution',G6:'Competing adviser',G7:'Staleness',G8:'Burn-out',G9:'Personal data',G10:'Sector exclusion'};
+      const hl = ev.worst.gate!==null && x.gate===ev.worst.gate;
+      return `<tr style="${hl?'background:#1d1416':''}"><td class="k mono">${x.gate}<div style="font-size:10.5px;color:var(--ink3);font-family:var(--sans)">${names[x.gate]||''}</div></td><td>${badge(x.result)}</td><td style="${hl?'color:var(--ink)':''}">${esc(x.reason)}</td></tr>`;
+    }).join('') + `</tbody></table>`;
+  const cls = ev.worst.result===RES.REFUSE?'refuse':ev.worst.result===RES.WARN||ev.worst.result===RES.HUMAN?'warn':'pass';
+  $('#gateVerdict').innerHTML = `<div class="verdict ${cls}"><span class="badge b-${cls==='pass'?'pass':cls==='warn'?'warn':'refuse'}">${ev.worst.result==='HUMAN'?'HELD FOR A PERSON':ev.worst.result}</span>
+    <div class="reason" style="margin-top:9px"><strong style="color:var(--ink)">${esc(ev.disposition)}</strong></div>
+    <div class="reason">A refusal is never a deletion. The record goes to the review queue with this reason attached, where a person decides.</div></div>`;
+  $('#routeOut').innerHTML = `<div class="kv">TARGET      ${esc(r.name||'—')}\nARCHETYPE   ${esc(r.archetype||'—')}   RUNG ${r.rung??'?'}\nROUTE       ${esc(ev.route)}\n\n${ev.route.startsWith('NONE')?'Not a lead. It is evidence that a gatekeeper ring is\nmissing — which is itself actionable.':'Every approach carries the counterfactual, not a pitch.\nThe engine drafts; the client sends.'}</div>`;
+}
+$('#recIn').addEventListener('input',()=>{clearTimeout(window.__t);window.__t=setTimeout(runGates,400);});
+
+/* --- score --- */
+const SW = {T:4,I:3,M:3,A:4,S:2,C:3};
+const SV = {T:4,I:3,M:4,A:4,S:2,C:4};
+function renderScore(){
+  $('#scoreInputs').innerHTML = FACTORS.map(f=>`
+    <div style="margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div><span class="mono" style="color:var(--accent)">${f.k}</span> <strong>${f.n}</strong> ${f.gate?'<span class="badge b-refuse" style="margin-left:6px">hard gate</span>':''}</div>
+        <div class="mono" style="color:var(--ink3)">weight <span id="w-${f.k}">${SW[f.k]}</span> · score <span id="v-${f.k}" style="color:var(--ink)">${SV[f.k]}</span></div>
+      </div>
+      <div class="two" style="gap:16px;margin-top:8px">
+        <div><label class="f">weight</label><input type="range" min="0" max="6" step="1" value="${SW[f.k]}" data-w="${f.k}"></div>
+        <div><label class="f">score 0–5</label><input type="range" min="0" max="5" step="1" value="${SV[f.k]}" data-v="${f.k}"></div>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);margin-top:5px">${f.d}</div>
+    </div>`).join('');
+  $$('#scoreInputs input').forEach(i=>i.addEventListener('input',()=>{
+    if(i.dataset.w!=null){SW[i.dataset.w]=+i.value;$('#w-'+i.dataset.w).textContent=i.value;}
+    if(i.dataset.v!=null){SV[i.dataset.v]=+i.value;$('#v-'+i.dataset.v).textContent=i.value;}
+    calcScore();
+  }));
+  calcScore();
+}
+function calcScore(){
+  const tw = FACTORS.reduce((a,f)=>a+SW[f.k],0)||1;
+  const raw = FACTORS.reduce((a,f)=>a+SW[f.k]*SV[f.k],0);
+  const score = Math.round(raw/tw*20);
+  $('#scoreOut').textContent = score;
+  const b = BANDS.find(x=>score>=x[0]);
+  $('#scoreOut').style.color = b[2]==='pass'?'var(--pass)':b[2]==='warn'?'var(--warn)':'var(--refuse)';
+  $('#scoreBand').innerHTML = `<span class="badge b-${b[2]}">${b[1]}</span>`;
+  $('#scoreBreak').innerHTML = `<table><thead><tr><th>Factor</th><th>w</th><th>s</th><th>contrib</th></tr></thead><tbody>` +
+    FACTORS.map(f=>{
+      const c=(SW[f.k]*SV[f.k]/tw*20);
+      const low = SV[f.k]<=1;
+      return `<tr><td class="k"><span class="mono" style="color:var(--accent)">${f.k}</span> ${f.n}</td><td class="mono">${SW[f.k]}</td><td class="mono ${low?'rf':''}">${SV[f.k]}</td><td class="mono">${c.toFixed(1)}</td></tr>`;
+    }).join('') + `</tbody></table>`;
+  const gates = FACTORS.filter(f=>f.gate && SV[f.k]<2);
+  $('#scoreGateNote').innerHTML = gates.length
+    ? `<div class="verdict refuse" style="margin-top:14px"><span class="badge b-refuse">gate override</span><div class="reason"><strong style="color:var(--ink)">Score ignored.</strong> ${gates.map(f=>`${f.n} (${f.k}) = ${SV[f.k]}`).join(' and ')} — below the hard-gate threshold of 2. The target is REFUSED regardless of how attractive the other four factors look. A non-assignable contract or a cleanliness problem cannot be fixed later by a better price.</div></div>`
+    : `<div class="verdict pass" style="margin-top:14px"><span class="badge b-pass">gates clear</span><div class="reason">Transferability and Cleanliness both ≥2, so the weighted score governs. Weights are uncalibrated until twenty live outcomes are recorded.</div></div>`;
+}
+
+/* --- funnel --- */
+const FV = {universe:3000, mandateFit:0.12, warm:0.32, engage:0.16, mandate:0.28, cap:4, close:0.45, ev:1500000, feePct:0.04};
+const FV_DEFAULT = Object.assign({}, FV);
+const FL = [
+  ['universe','Filtered universe (companies)','count',500,30000,250],
+  ['mandateFit','% matching the mandate (sector, size, geography)','pct',0.02,0.60,0.01],
+  ['warm','% with a named warm path or gatekeeper route','pct',0.05,0.95,0.01],
+  ['engage','% engaged → conversation','pct',0.03,0.60,0.01],
+  ['mandate','% conversation → mandate','pct',0.05,0.70,0.01],
+  ['cap','CAPACITY CAP — mandates one operator can take per year','count',1,12,1],
+  ['close','% mandate → closed deal','pct',0.10,1.00,0.05]
+];
+function renderFunnelInputs(){
+  $('#funnelInputs').innerHTML = FL.map(([k,l,t,mn,mx,st])=>`
+    <div class="field"><label class="f">${l} — <span id="fv-${k}" class="mono"></span></label>
+    <input type="range" min="${mn}" max="${mx}" step="${st}" value="${FV[k]}" data-f="${k}" data-t="${t}"></div>`).join('') +
+    `<div class="two">
+      <div class="field"><label class="f">average enterprise value (£)</label><input type="number" id="f-ev" value="${FV.ev}" step="50000"></div>
+      <div class="field"><label class="f">success fee (%)</label><input type="number" id="f-fee" value="${(FV.feePct*100).toFixed(1)}" step="0.5" min="0.5" max="12"></div>
+    </div>`;
+  $$('#funnelInputs input[type=range]').forEach(i=>i.addEventListener('input',()=>{FV[i.dataset.f]=+i.value;calcFunnel();}));
+  $('#f-ev').addEventListener('input',e=>{FV.ev=+e.target.value||0;calcFunnel();});
+  $('#f-fee').addEventListener('input',e=>{FV.feePct=(+e.target.value||0)/100;calcFunnel();});
+}
+function funnelSteps(v){
+  const s1=v.universe, s2=s1*v.mandateFit, s3=s2*v.warm, s4=s3*v.engage, s5=s4*v.mandate;
+  const capped=Math.min(s5, v.cap), s6=capped*v.close;
+  return {rows:[
+    {l:'Filtered universe',n:s1,c:''},
+    {l:'Match the mandate',n:s2,c:''},
+    {l:'Named warm path',n:s3,c:'hot'},
+    {l:'Engaged → conversation',n:s4,c:'hot'},
+    {l:'Qualified for a mandate',n:s5,c:'win'},
+    {l:'Taken (capacity cap)',n:capped,c:'win'},
+    {l:'Closed in 12 months',n:s6,c:'win'}
+  ], s5:s5, capped:capped, closed:s6};
+}
+function calcFunnel(){
+  FL.forEach(([k,l,t])=>{ $('#fv-'+k).textContent = t==='count'? FV[k].toLocaleString() : (FV[k]*100).toFixed(0)+'%'; });
+  const {rows,s5,capped,closed} = funnelSteps(FV);
+  const max = rows[0].n||1;
+  $('#funnel').innerHTML = rows.map((s,i)=>{
+    const w = Math.max(6, s.n/max*100);
+    const rate = i===0?'':(s.n/(rows[i-1].n||1)*100).toFixed(0)+'% of prior';
+    return `<div class="fstep"><div class="fbar ${s.c}" style="width:${w}%">${esc(s.l)}</div><div class="fnum">${s.n<10?s.n.toFixed(1):Math.round(s.n).toLocaleString()}</div><div class="frate">${rate}</div></div>`;
+  }).join('');
+  const fee = closed*FV.ev*FV.feePct;
+  const hours = capped*220;
+  const constraint = s5 > FV.cap ? 'capacity' : 'demand';
+  $('#funnelStats').innerHTML = `
+    <div class="stat"><div class="lab">Closed deals / yr</div><div class="val" style="color:var(--pass)">${closed.toFixed(1)}</div><div class="note">${capped.toFixed(1)} mandates taken, ${(FV.close*100).toFixed(0)}% close</div></div>
+    <div class="stat"><div class="lab">Fee income / yr</div><div class="val">£${Math.round(fee).toLocaleString()}</div><div class="note">at £${(FV.ev/1000).toFixed(0)}k EV × ${(FV.feePct*100).toFixed(1)}%</div></div>
+    <div class="stat"><div class="lab">Effective rate</div><div class="val">£${hours?Math.round(fee/hours).toLocaleString():0}/hr</div><div class="note">${Math.round(hours).toLocaleString()} hrs at ~220 per mandate</div></div>`;
+  const floorBreaches = FV.ev*FV.feePct < CTX.feeFloor;
+  const excess = Math.max(0, s5 - FV.cap);
+  $('#funnelNote').innerHTML =
+    `<strong>Binding constraint: ${constraint.toUpperCase()}.</strong> ` +
+    (constraint==='capacity'
+      ? `${s5.toFixed(1)} conversations qualify for a mandate but one operator can carry ${FV.cap}. <strong style="color:var(--warn)">${excess.toFixed(1)} good deals are turned away every year.</strong> That is not a lead-generation problem and no engine fixes it — the answers are a higher fee floor, a narrower mandate, a referral arrangement with another adviser, or more capacity. Turning deals away silently is how a practice caps out without noticing.`
+      : `Only ${s5.toFixed(1)} conversations qualify per year against a capacity of ${FV.cap}. The engine is under-fed: raise mandate fit, warm-path coverage or engagement before anything else.`) +
+    ` At these settings a mandate is worth <strong>£${Math.round(FV.ev*FV.feePct).toLocaleString()}</strong> — ${floorBreaches?`<span class="rf">below the £${CTX.feeFloor.toLocaleString()} fee floor; gate G3 warns on every one — and year one tends to fill with exactly these.</span>`:`<span class="ok">above the £${CTX.feeFloor.toLocaleString()} fee floor.</span>`}`;
+  renderSens();
+}
+function renderSens(){
+  const base = funnelSteps(FV).closed;
+  const baseFee = base*FV.ev*FV.feePct;
+  const lev = function(o){ const f = funnelSteps(Object.assign({}, FV, o)); return {n:f.closed, fee:f.closed*f.ev*(o.feePct!==undefined?o.feePct:FV.feePct)}; };
+  const levers = [
+    ['Universe x2', lev({universe:FV.universe*2})],
+    ['Mandate fit +5pts', lev({mandateFit:Math.min(0.6,FV.mandateFit+0.05)})],
+    ['Warm-path coverage x1.5', lev({warm:Math.min(0.95,FV.warm*1.5)})],
+    ['Engagement rate x1.5', lev({engage:Math.min(0.6,FV.engage*1.5)})],
+    ['Capacity cap +50%', lev({cap:Math.round(FV.cap*1.5)})],
+    ['Average EV x2', lev({ev:FV.ev*2})],
+    ['Fee floor raised: EV x2, cap -20%', lev({ev:FV.ev*2, cap:Math.max(1,Math.round(FV.cap*0.8))})]
+  ];
+  let html = '<thead><tr><th>Lever</th><th>Closed / yr</th><th>Change in deals</th><th>Change in fee income</th></tr></thead><tbody>';
+  for(let i=0;i<levers.length;i++){
+    const l = levers[i][0], v = levers[i][1];
+    const d = v.n - base, df = v.fee - baseFee;
+    const dc = d > 0.05 ? 'ok' : (d < -0.05 ? 'rf' : '');
+    const fc = df > 0 ? 'ok' : (df < 0 ? 'rf' : '');
+    const ds = (d >= 0 ? '+' : '') + d.toFixed(1);
+    const fs2 = (df >= 0 ? '+' : '') + String.fromCharCode(163) + Math.round(df).toLocaleString();
+    html += '<tr><td class="k">' + l + '</td>'
+          + '<td class="mono">' + v.n.toFixed(1) + '</td>'
+          + '<td class="mono ' + dc + '">' + ds + '</td>'
+          + '<td class="mono ' + fc + '">' + fs2 + '</td></tr>';
+  }
+  html += '</tbody>';
+  $('#sensTable').innerHTML = html;
+}
+
+/* --- triggers --- */
+let tFilter={band:0, arch:'all', cost:'all'};
+function renderTrigFilters(){
+  const b = [['0','All bands'],['1','Band 1 · leading'],['2','Band 2 · concurrent'],['3','Band 3 · confirming']];
+  const a = [['all','All archetypes'],['A1','A1 succession'],['A2','A2 insolvency'],['A3','A3 venture'],['A4','A4 structural'],['A5','A5 carve-out'],['A6','A6 personal']];
+  const c = [['all','Any cost'],['Free','Free only'],['£','Paid']];
+  $('#trigFilters').innerHTML =
+    b.map(([v,l])=>`<button data-f="band" data-v="${v}" class="${String(tFilter.band)===v?'on':''}">${l}</button>`).join('') +
+    `<span style="width:14px"></span>` +
+    a.map(([v,l])=>`<button data-f="arch" data-v="${v}" class="${tFilter.arch===v?'on':''}">${l}</button>`).join('') +
+    `<span style="width:14px"></span>` +
+    c.map(([v,l])=>`<button data-f="cost" data-v="${v}" class="${tFilter.cost===v?'on':''}">${l}</button>`).join('');
+  $$('#trigFilters button').forEach(x=>x.addEventListener('click',()=>{
+    const f=x.dataset.f; const v=x.dataset.v;
+    tFilter[f] = f==='band'? +v : v;
+    renderTrigFilters(); renderTriggers();
+  }));
+}
+function renderTriggers(){
+  const rows = TRIGGERS.filter(t=>
+    (!tFilter.band || t.band===tFilter.band) &&
+    (tFilter.arch==='all' || t.arch.includes(tFilter.arch)) &&
+    (tFilter.cost==='all' || (tFilter.cost==='Free'? t.cost.includes('Free') : t.cost.includes('£'))));
+  const bandName={1:'LEADING',2:'CONCURRENT',3:'CONFIRMING'};
+  const bandCls={1:'b-info',2:'b-pass',3:'b-warn'};
+  $('#trigTable').innerHTML = `<thead><tr><th>Band</th><th>Lead time</th><th>Trigger</th><th>Source &amp; access</th><th>Cost</th><th>FP risk</th><th>Arch</th><th>Rule</th></tr></thead><tbody>` +
+    rows.map(t=>`<tr>
+      <td><span class="badge ${bandCls[t.band]}">${bandName[t.band]}</span></td>
+      <td class="mono">${esc(t.lead)}</td>
+      <td class="k" style="min-width:190px">${esc(t.name)}</td>
+      <td style="min-width:230px"><div>${esc(t.src)}</div><div style="color:${t.acc.includes('AGGREGATE')||t.acc.includes('NOT public')?'var(--warn)':'var(--ink3)'};font-size:12px;margin-top:3px">${esc(t.acc)}</div></td>
+      <td class="mono">${esc(t.cost)}</td>
+      <td class="mono" style="font-size:11px">${esc(t.fp)}</td>
+      <td class="mono">${esc(t.arch)}</td>
+      <td style="min-width:230px;font-size:12.5px">${esc(t.gate)}</td>
+    </tr>`).join('') + `</tbody>`;
+}
+
+/* --- gatekeepers --- */
+function renderGK(){
+  $('#gkTable').innerHTML = `<thead><tr><th>Ring</th><th>Who</th><th>Why they route</th><th>What they need from you</th><th>Volume</th><th>Risk</th></tr></thead><tbody>` +
+    GKRINGS.map(g=>`<tr>
+      <td class="k" style="white-space:nowrap">${esc(g.r)}</td>
+      <td style="min-width:200px">${esc(g.who)}</td>
+      <td style="min-width:220px">${esc(g.why)}</td>
+      <td style="min-width:220px">${esc(g.needs)}</td>
+      <td class="mono" style="font-size:11.5px">${esc(g.vol)}</td>
+      <td class="mono rf">${esc(g.risk)}</td>
+    </tr>`).join('')+`</tbody>`;
+}
+
+/* --- registers & fee floor --- */
+const WARNCMP = [
+  ['Statutory notice period','30 days (20-99 redundancies), 45 days (100+)','60 calendar days','us'],
+  ['Employer names published','NO — monthly aggregates only; ONS adds industry and region','YES — by state labour departments, individually, with site address, date and headcount','us'],
+  ['Coverage threshold','20+ at one establishment in 90 days','Federal: employers with 100+; plant closing 50+ full-time; mass layoff 500+ or 50-499 if >=33%','uk'],
+  ['Sub-100-employee SMEs','Covered from 20 up','NOT covered federally — only by state mini-WARN acts','uk'],
+  ['Access','GOV.UK aggregate table; ONS dataset','~44-50 state lists, mixed formats; aggregators index 85,000+ notices','even']
+];
+
+const REGS = [
+  ['UK','HR1 advance redundancy notification','Named employer? NO. Aggregates + ONS industry/region','GOV.UK / ONS','Free','30-45 days','2','11, 12'],
+  ['US','WARN / mini-WARN lists','Named employer, site, closure vs layoff, date, headcount','~44-50 state labour depts; Socrata portals; aggregators','Free','60 days','2','-'],
+  ['UK','Free Company Data Product','Census of every live company: SIC, status, accounts dates, previous names','download.companieshouse.gov.uk, monthly ZIP ~471MB','Free','monthly','1','-'],
+  ['UK','Companies House Streaming API','Real-time insolvency-cases and companies streams; names the appointed IP','stream.companieshouse.gov.uk','Free','real-time','3','-'],
+  ['UK','Companies House officers date_of_birth','Controlling-person age band for the A1 succession engine','REST API. Officers BULK file is not public','Free','monthly','1','4, 5'],
+  ['US','PACER Case Locator','Federal bankruptcy: chapter, debtor, court, judge, filing date','REST API; free QA environment','$0.10/page, $0.12 from Jan 2027; $3 doc cap; WAIVED if quarterly spend <= $30','0 days','3','-'],
+  ['US','CourtListener / RECAP archive','Millions of PACER dockets and documents, with API and bulk feeds','free.law / courtlistener.com','Free','0 days','3','-'],
+  ['US','Section 363 sale notices','Assets actually being marketed, with bid deadlines','RECAP docket text; specialist trackers','Free to £','15-45 days','3','-'],
+  ['US','SEC EDGAR full-text search','8-K strategic alternatives, going-concern doubt, auditor changes, Item 2.05 exit costs','Free API + full-text search over 35m+ filings','Free','15-180 days','1-2','-'],
+  ['US','State Secretaries of State','Entity status, administrative dissolution, annual-report delinquency, agent changes','Per state; no national register','Free to £','30-180 days','1-2','-'],
+  ['US','UCC filings','Secured-creditor positions; a new non-bank filing is a distress signal','State-level; national aggregators','£','60-365 days','1-2','-'],
+  ['US','FMCSA carrier census / SAFER','Authority status, insurance lapses, out-of-service rates - a whole sector enumerated','Federal, free, API','Free','30-90 days','1-2','-'],
+  ['US','State occupational licences','Healthcare facility, childcare, contractor, liquor, freight-broker surety bonds','State boards','Free to £','30-90 days','2','-'],
+  ['UK','The Gazette (London/Edinburgh/Belfast)','Strike-offs, petitions, appointments, IP details, licence actions','Linked-data REST API','Free','daily','2-3','-'],
+  ['UK','CCJs (Registry Trust)','Court judgments - the pre-insolvency distress signal','TrustOnline / credit agencies','£','daily','2','-'],
+  ['US','State tax liens + county judgments','The CCJ analogue, but fragmented across counties','County and state; aggregators','£','60-180 days','2','-'],
+  ['UK','CQC / Ofsted / DVSA / FCA / SIA','Sector registrations and their surrender or transfer','Public registers, mixed APIs','Free to £','30-90 days','2','-'],
+  ['UK','Business-for-sale marketplaces','BusinessTransfer, RightBusiness, Daltons, Christie & Co, Kingsbridge','Scrape / manual / agent relationship','£','30-365 days','2','1'],
+  ['US','Business-for-sale marketplaces','BizBuySell, Transworld, Sunbelt, VR Business Brokers','Scrape / broker relationship','£','30-365 days','2','1']
+];
+
+const PARITY = [
+  ['HR1 advance redundancy notification','WARN / mini-WARN','US BETTER','Names employers; 60 days not 30'],
+  ['Free Company Data Product (one national census)','50 separate Secretary-of-State registers','UK MUCH BETTER','The biggest build cost on the US side'],
+  ['Companies House Streaming API (real-time, free)','No equivalent. PACER/RECAP polling; EDGAR index.json','UK BETTER','-'],
+  ['Officers date_of_birth (month + year)','NONE','UK ONLY','Removes the largest archetype (A1) from the US side'],
+  ['The Gazette (one national notice feed)','Federal Register + 50 states + county recorders','UK MUCH BETTER','-'],
+  ['CCJs (Registry Trust, one source)','State tax liens + county judgments, fragmented','UK BETTER','-'],
+  ['Winding-up petition in the Gazette','Bankruptcy petition in PACER','COMPARABLE','PACER is better structured'],
+  ['Insolvency practitioner named on appointment','Chapter 11 debtor counsel; Chapter 7 panel trustee','COMPARABLE','Gatekeeper logic ports directly'],
+  ['CQC / Ofsted / DVSA registrations','State health-facility, childcare, contractor licences; FMCSA','COMPARABLE','More fragmented'],
+  ['Strike-off (DS01)','Administrative dissolution by the Secretary of State','COMPARABLE','-'],
+  ['Charges register','UCC-1 filings','COMPARABLE','-']
+];
+
+const BANDS_FEE = [
+  ['£150k-£1m','4-6%, often with a low minimum','£6k-£60k','NOT VIABLE on success fee alone','Only works with fixed-fee closure support and component deals. High volume, thin margin, and it consumes the capacity better deals need.','refuse'],
+  ['£1m-£5m','3-5%','£30k-£250k','THE SWEET SPOT','Below boutique minimums (typically £75k-£150k on £5-15m deals), above the pointlessness threshold. One to two closes a year is a real practice. Tier-1 firms are structurally absent.','pass'],
+  ['£5m-£25m','1-3% + retainer','£150k-£750k','Competitive but contested','Boutique minimum fees bite, and 26% of advisors set a minimum transaction value above $5m. The KPMG alumni network and rings 4-5 matter more than the trigger engine.','warn'],
+  ['US $10m-$25m','3-6% (lower middle market)','$300k-$1.5m','Where a US practice is viable','Below $5m, success fees rarely drop under 3% and the economics match the UK sub-£1m problem.','warn']
+];
+
+let regFilter = 'all';
+function renderWarn(){
+  $('#warnTable').innerHTML = '<thead><tr><th style="width:170px"></th><th>UK &mdash; HR1</th><th>US &mdash; WARN Act</th></tr></thead><tbody>' +
+    WARNCMP.map(function(r){
+      const ukCls = r[3]==='uk' ? ' class="ok"' : '';
+      const usCls = r[3]==='us' ? ' class="ok"' : '';
+      return '<tr><td class="k">'+r[0]+'</td><td'+ukCls+'>'+r[1]+'</td><td'+usCls+'>'+r[2]+'</td></tr>';
+    }).join('') + '</tbody>';
+}
+function renderRegFilters(){
+  const opts=[['all','All'],['UK','UK only'],['US','US only']];
+  $('#regFilters').innerHTML = opts.map(function(o){
+    return '<button data-v="'+o[0]+'" class="'+(regFilter===o[0]?'on':'')+'">'+o[1]+'</button>';
+  }).join('');
+  Array.prototype.forEach.call($('#regFilters').querySelectorAll('button'), function(b){
+    b.addEventListener('click', function(){ regFilter=b.getAttribute('data-v'); renderRegFilters(); renderRegs(); });
+  });
+}
+function renderRegs(){
+  const rows = REGS.filter(function(r){ return regFilter==='all' || r[0]===regFilter; });
+  $('#regTable').innerHTML = '<thead><tr><th>Juris</th><th>Register</th><th>What it gives</th><th>Access</th><th>Cost</th><th>Lead</th><th>Band</th></tr></thead><tbody>' +
+    rows.map(function(r){
+      const jc = r[0]==='UK' ? 'b-info' : 'b-warn';
+      return '<tr><td><span class="badge '+jc+'">'+r[0]+'</span></td>'
+        + '<td class="k" style="min-width:170px">'+r[1]+'</td>'
+        + '<td style="min-width:250px">'+r[2]+'</td>'
+        + '<td style="min-width:180px;font-size:12px;color:var(--ink3)">'+r[3]+'</td>'
+        + '<td class="mono" style="font-size:11px">'+r[4]+'</td>'
+        + '<td class="mono">'+r[5]+'</td>'
+        + '<td class="mono">'+r[6]+'</td></tr>';
+    }).join('') + '</tbody>';
+  renderParity();
+}
+function renderParity(){
+  let html = '<table><thead><tr><th>UK trigger</th><th>US equivalent</th><th>Parity</th><th>Note</th></tr></thead><tbody>';
+  html += PARITY.map(function(r){
+    const cls = r[2].indexOf('UK')===0 ? 'inf' : (r[2].indexOf('US')===0 ? 'ok' : '');
+    return '<tr><td class="k">'+r[0]+'</td><td>'+r[1]+'</td><td class="mono '+cls+'">'+r[2]+'</td><td style="color:var(--ink3)">'+r[3]+'</td></tr>';
+  }).join('');
+  html += '</tbody></table>';
+  const el = $('#parityWrap');
+  if(el) el.innerHTML = html;
+}
+function renderBands(){
+  $('#bandTable').innerHTML = '<thead><tr><th>EV band</th><th>Typical fee</th><th>Fee at mandate</th><th>Verdict</th><th>Why</th></tr></thead><tbody>' +
+    BANDS_FEE.map(function(b){
+      return '<tr><td class="k mono">'+b[0]+'</td><td class="mono">'+b[1]+'</td><td class="mono">'+b[2]+'</td>'
+        + '<td><span class="badge b-'+b[5]+'">'+b[3]+'</span></td><td style="min-width:280px">'+b[4]+'</td></tr>';
+    }).join('') + '</tbody>';
+  $('#bandNote').innerHTML = '<strong>Recommendation if the floor is not yet decided:</strong> set the floor at <strong>£30,000 modelled fee</strong> and the mandate at <strong>£1m-£5m EV</strong>, then let twenty live outcomes argue with it. That band is where the structural absence of tier-1 competition, the fee economics of a solo practice, and the reach of a regional network all overlap. It also makes the capacity cap the honest constraint - which is a conversation worth having in week 1 rather than month 9.';
+}
+
+const EXAMPLES = [{"n": "02448880", "name": "T.G. Precision Engineering Ltd", "sector": "eng", "town": "Malton", "inc": 1989, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1989; Total Exemption Full accounts filer; registered in Malton (YO17 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "03164148", "name": "D.A. Cooper & Sons Ltd", "sector": "eng", "town": "Rotherham", "inc": 1996, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1996; Total Exemption Full accounts filer; registered in Rotherham (S60 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "00709252", "name": "Teknequip Ltd", "sector": "eng", "town": "Doncaster", "inc": 1961, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1961; Small accounts filer; registered in Doncaster (DN4 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "00963483", "name": "Economic Cutting Ltd", "sector": "eng", "town": "Sheffield", "inc": 1969, "signals": ["AGE", "NOSUCC", "LONG"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1969; Micro Entity accounts filer; registered in Sheffield (S17 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).", "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "00946376", "name": "Mogul Engineers Ltd", "sector": "eng", "town": "South Yorkshire", "inc": 1969, "signals": ["AGE", "NOSUCC", "LONG"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1969; Total Exemption Full accounts filer; registered in South Yorkshire (S65 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).", "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "01318246", "name": "Tri-Print Ltd", "sector": "print", "town": "Bradford", "inc": 1977, "signals": ["AGE", "NOSUCC", "LONG"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1977; Total Exemption Full accounts filer; registered in Bradford (BD8 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).", "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "04449126", "name": "Hillsprint Ltd", "sector": "print", "town": "Thirsk", "inc": 2002, "signals": ["AGE", "NOSUCC", "SOLE"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 2002; Unaudited Abridged accounts filer; registered in Thirsk (YO7 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "04678129", "name": "Philprint (Scarborough) Ltd", "sector": "print", "town": "Scarborough", "inc": 2003, "signals": ["AGE", "NOSUCC", "SOLE"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 2003; Micro Entity accounts filer; registered in Scarborough (YO11 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "01181153", "name": "James H. Wood Printers Ltd", "sector": "print", "town": "Penistone", "inc": 1974, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1974; Total Exemption Full accounts filer; registered in Penistone (S36 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "00961692", "name": "Grangefield Products (Mail Order) Ltd", "sector": "print", "town": "Bradford", "inc": 1969, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1969; Total Exemption Full accounts filer; registered in Bradford (BD8 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder. Caution: registered as printing, but the name suggests mail order — the sector code needs a second source.", "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "01566995", "name": "Landseair Travel Co. Ltd", "sector": "travel", "town": "Doncaster", "inc": 1981, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1981; Micro Entity accounts filer; registered in Doncaster (DN6 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "01355877", "name": "D.P. International Tours Ltd", "sector": "travel", "town": "Scarborough", "inc": 1978, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1978; Total Exemption Full accounts filer; registered in Scarborough (YO11 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "03470106", "name": "Lifestyle Travel Club Ltd", "sector": "travel", "town": "Sheffield", "inc": 1997, "signals": ["AGE", "NOSUCC", "SOLE", "LONG"], "strength": 4, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1997; Total Exemption Full accounts filer; registered in Sheffield (S26 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "02864812", "name": "Brewood Travel Ltd", "sector": "travel", "town": "Wetherby", "inc": 1993, "signals": ["AGE", "NOSUCC", "LONG"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1993; Total Exemption Full accounts filer; registered in Wetherby (LS22 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).", "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "03328582", "name": "Different World Travel Ltd", "sector": "travel", "town": "Sheffield", "inc": 1997, "signals": ["AGE", "NOSUCC", "LONG"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 1997; Micro Entity accounts filer; registered in Sheffield (S11 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).", "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "03569702", "name": "Eden Consultants Ltd", "sector": "acct", "town": "Hessle", "inc": 1998, "signals": ["OVERDUE", "AGE", "NOSUCC", "SOLE", "LONG"], "strength": 5, "track": "A1 · rung 1 · nurture + verify", "why": "Incorporated 1998; Total Exemption Full accounts filer; registered in Hessle (HU13 postcode area). Accounts overdue on the 1 Nov 2026 snapshot (due 2020-02-29). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "03832818", "name": "E-Accounting Ltd", "sector": "acct", "town": "Leeds", "inc": 1999, "signals": ["OVERDUE", "NOSUCC", "LONG"], "strength": 3, "track": "A1 · rung 1 · nurture + verify", "why": "Incorporated 1999; Unaudited Abridged accounts filer; registered in Leeds (LS2 postcode area). Accounts overdue on the 1 Nov 2026 snapshot (due 2020-08-30). No active director is under 50 (month-and-year birth data on the public register).", "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "04550921", "name": "Oatlands Accounting Ltd", "sector": "acct", "town": "Harrogate", "inc": 2002, "signals": ["AGE", "NOSUCC", "SOLE"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 2002; Total Exemption Full accounts filer; registered in Harrogate (HG2 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "04360738", "name": "Cleethorpes Accountancy Ltd", "sector": "acct", "town": "N E Lincs", "inc": 2002, "signals": ["AGE", "NOSUCC", "SOLE"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 2002; Micro Entity accounts filer; registered in N E Lincs (DN35 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}, {"n": "04429294", "name": "Trevelyan & Company Ltd", "sector": "acct", "town": "Wakefield", "inc": 2002, "signals": ["AGE", "NOSUCC", "SOLE"], "strength": 3, "track": "A1 · rung 0 · nurture", "why": "Incorporated 2002; Total Exemption Full accounts filer; registered in Wakefield (WF1 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.", "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."}];
+const FUNNEL_STATS = {"register": 5711780, "sector": 810, "owner": 634, "checked": 240, "signalled": 48};
+/* --- shared: activate a tab programmatically --- */
+function activateTab(t){
+  $$('.tab').forEach(x=>x.classList.toggle('on', x.dataset.t===t));
+  $$('.pane').forEach(x=>x.classList.toggle('on', x.id==='p-'+t));
+}
+
+/* --- the twenty real companies --- */
+const SIGNAL_LABEL = {
+  OVERDUE:['Accounts overdue','b-warn'],
+  AGE:['Controlling owner 62+ (inferred band)','b-info'],
+  NOSUCC:['No active director under 50','b-info'],
+  SOLE:['Sole director and owner','b-info'],
+  LONG:['In business 25+ years','b-mute'],
+  CHARGE:['Outstanding charge','b-mute']
+};
+const SECTOR_NAME = {eng:'Precision engineering',print:'Commercial printing',travel:'Travel agency',acct:'Accountancy practice'};
+let coFilter = 'all';
+function renderCoFilters(){
+  const opts=[['all','All 20'],...Object.entries(SECTOR_NAME)];
+  $('#coFilters').innerHTML = opts.map(([k,l])=>`<button data-k="${k}" class="${coFilter===k?'on':''}">${l}</button>`).join('');
+  $$('#coFilters button').forEach(b=>b.addEventListener('click',()=>{coFilter=b.dataset.k;renderCoFilters();renderCompanies();}));
+}
+function renderCompanies(){
+  const rows = EXAMPLES.filter(e=>coFilter==='all'||e.sector===coFilter);
+  $('#coTable').innerHTML = `<thead><tr><th>Company</th><th>Sector</th><th>Town · since</th><th>Signals</th><th>Strength</th><th>Track</th></tr></thead><tbody>` +
+    rows.map((e,i)=>`
+    <tr class="co-row" data-i="${i}" tabindex="0" style="cursor:pointer">
+      <td class="k" style="min-width:210px">${esc(e.name)}<div class="mono" style="font-size:11px;color:var(--ink3);margin-top:2px"><a href="https://find-and-update.company-information.service.gov.uk/company/${esc(e.n)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${esc(e.n)} ↗</a></div></td>
+      <td>${esc(SECTOR_NAME[e.sector])}</td>
+      <td class="mono" style="font-size:12px">${esc(e.town)} · ${e.inc}</td>
+      <td style="min-width:220px">${e.signals.map(s=>`<span class="badge ${SIGNAL_LABEL[s][1]}" style="margin:0 4px 4px 0">${esc(SIGNAL_LABEL[s][0])}</span>`).join('')}</td>
+      <td class="mono" style="white-space:nowrap">${'●'.repeat(e.strength)}${'○'.repeat(5-e.strength)}</td>
+      <td class="mono" style="font-size:11.5px">${esc(e.track)}</td>
+    </tr>
+    <tr class="co-detail" id="co-d-${i}"><td colspan="6">
+      <div class="two" style="gap:20px">
+        <div><div class="label-line">What flagged it</div><div style="font-size:13px">${esc(e.why)}</div></div>
+        <div><div class="label-line">What would happen next</div><div style="font-size:13px">${esc(e.next)}</div></div>
+      </div>
+    </td></tr>`).join('') + `</tbody>`;
+  const toggle = tr=>{ $('#co-d-'+tr.dataset.i).classList.toggle('open'); };
+  $$('#coTable .co-row').forEach(tr=>{
+    tr.addEventListener('click',()=>toggle(tr));
+    tr.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();toggle(tr);} });
+  });
+}
+function renderCoFunnel(){
+  const rows = [
+    {l:'Companies on the register (snapshot)', n:FUNNEL_STATS.register, c:''},
+    {l:'Active, in these 4 sectors, Yorkshire & Humber, est. by 2005', n:FUNNEL_STATS.sector, c:''},
+    {l:'Owner-managed filers, est. by 2003', n:FUNNEL_STATS.owner, c:'hot'},
+    {l:'Checked against officer and ownership pages', n:FUNNEL_STATS.checked, c:'hot'},
+    {l:'A leading signal plus two supporting ones', n:FUNNEL_STATS.signalled, c:'win'},
+    {l:'Shown here', n:EXAMPLES.length, c:'win'}
+  ];
+  const max = rows[0].n;
+  $('#coFunnel').innerHTML = rows.map(s=>{
+    const w = Math.max(8, Math.log10(s.n+1)/Math.log10(max+1)*100);
+    return `<div class="fstep"><div class="fbar ${s.c}" style="width:${w}%">${esc(s.l)}</div><div class="fnum">${s.n.toLocaleString()}</div><div class="frate"></div></div>`;
+  }).join('');
+}
+
+/* --- pitfalls --- */
+function renderDefects(){
+  $('#defectTable').innerHTML = `<thead><tr><th>Pitfall</th><th>What goes wrong</th><th>Why</th><th>Rule that prevents it</th><th>Proof</th></tr></thead><tbody>` +
+    PITFALLS.map(d=>`<tr>
+      <td class="k" style="min-width:150px">${esc(d.t)}</td>
+      <td style="min-width:180px">${esc(d.s)}</td>
+      <td style="min-width:190px;color:var(--ink3)">${esc(d.c)}</td>
+      <td style="min-width:250px">${esc(d.f)}</td>
+      <td class="mono" style="min-width:200px;font-size:11.5px;color:var(--info)">${esc(d.r)}</td>
+    </tr>`).join('')+`</tbody>`;
+}
+
+/* --- guided tour --- */
+const TOUR = [
+  {sel:'#intro', title:'The goal', body:'One or two extra mandates a year, run by one person. Everything here is sized to that — not to volume, and not to cold calling.'},
+  {sel:'#ladderCard', title:'Every closure is a ladder', body:'Value drains away at each rung. Large firms and agents turn up at rungs 3–4. Windpath works rungs 0–2, where there is no incumbent adviser and the owner still decides. Click any rung to see the rule for it.',
+   pre:()=>{ const r=$('.rung[data-r="0"]'); if(r && $('#rungDetail').style.display==='none') r.click(); }},
+  {sel:'#p-triggers .card', tab:'triggers', title:'Signals: what we watch', body:'Public signals, sorted by how early they fire. Most come from free registers. Try the filters — by type of situation, or free versus paid.'},
+  {sel:'#p-gates .card', tab:'gates', title:'Gates: what the tool will not do', body:'Ten checks run before anything is suggested. This example is a company already in liquidation: the owner no longer controls it, so the check refuses that route and points to the appointed practitioner. Pick other examples, or edit the record.',
+   pre:()=>{ current='meridian'; renderPresets(); loadRecord(); }},
+  {sel:'#p-score .card', tab:'score', title:'Scoring: is a deal realistic?', body:'The score favours the two things a solo adviser can\'t fix later: can the value be transferred to a buyer, and can you reach the owner through someone you know. Two factors act as hard gates. Move any slider.'},
+  {sel:'#p-funnel .card', tab:'funnel', title:'Pipeline: the honest numbers', body:'On these starting assumptions one person gets to about two closes a year. The point isn\'t the number — it\'s which lever moves it. Warm-path coverage beats a bigger universe. Drag the sliders.',
+   pre:()=>{ Object.assign(FV, FV_DEFAULT); renderFunnelInputs(); calcFunnel(); }},
+  {sel:'#p-gk .card', tab:'gk', title:'Gatekeepers: where introductions come from', body:'Accountants, insolvency practitioners, lenders, lawyers. Forty to sixty named people beat five hundred cold approaches. A company with no route is parked, never chased.'},
+  {sel:'#p-companies .card', tab:'companies', title:'Twenty real companies', body:'Screened today from public Companies House data: four sectors, one region. Not verified, not approached — a demonstration of what the method surfaces. Click a row for what flagged it.'},
+  {sel:'#ask', title:'The decision', body:'A go / no-go on direction, and three things to confirm so a build can be scoped. No price attached.'}
+];
+let tourIdx = -1;
+function tourEnsurePanel(){
+  if($('#tourPanel')) return;
+  const p = document.createElement('div');
+  p.id='tourPanel'; p.setAttribute('role','dialog'); p.setAttribute('aria-label','Guided tour');
+  p.innerHTML = `<div class="tp-top"><span class="tp-count mono" id="tpCount"></span><button class="tp-x" id="tpClose" aria-label="Close tour">✕</button></div>
+    <div class="tp-title" id="tpTitle"></div><div class="tp-body" id="tpBody"></div>
+    <div class="tp-dots" id="tpDots"></div>
+    <div class="tp-nav"><button id="tpBack">← Back</button><button class="primary" id="tpNext">Next →</button></div>`;
+  document.body.appendChild(p);
+  $('#tpClose').addEventListener('click', tourStop);
+  $('#tpBack').addEventListener('click', ()=>tourGo(tourIdx-1));
+  $('#tpNext').addEventListener('click', ()=>{ tourIdx>=TOUR.length-1 ? tourStop() : tourGo(tourIdx+1); });
+}
+function tourGo(i){
+  if(i<0||i>=TOUR.length) return;
+  tourEnsurePanel();
+  $$('.tour-hl').forEach(x=>x.classList.remove('tour-hl'));
+  tourIdx=i; const s=TOUR[i];
+  if(s.tab) activateTab(s.tab);
+  if(s.pre) s.pre();
+  const el=$(s.sel);
+  if(el){
+    el.classList.add('tour-hl');
+    const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({behavior: calm?'auto':'smooth', block:'start'});
+  }
+  $('#tpCount').textContent = `Step ${i+1} of ${TOUR.length}`;
+  $('#tpTitle').textContent = s.title;
+  $('#tpBody').textContent = s.body;
+  $('#tpDots').innerHTML = TOUR.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('');
+  $('#tpBack').disabled = i===0;
+  $('#tpNext').textContent = i===TOUR.length-1 ? 'Finish' : 'Next →';
+  $('#tourPanel').style.display='block';
+  document.body.classList.add('touring');
+}
+function tourStop(){
+  $$('.tour-hl').forEach(x=>x.classList.remove('tour-hl'));
+  const p=$('#tourPanel'); if(p) p.style.display='none';
+  document.body.classList.remove('touring');
+  tourIdx=-1;
+}
+document.addEventListener('keydown', ev=>{
+  if(tourIdx<0) return;
+  if(ev.key==='Escape') tourStop();
+  else if(ev.key==='ArrowRight') tourIdx>=TOUR.length-1 ? tourStop() : tourGo(tourIdx+1);
+  else if(ev.key==='ArrowLeft') tourGo(tourIdx-1);
+});
+$('#tourStart').addEventListener('click', ()=>tourGo(0));
+$('#jumpCompanies').addEventListener('click', ()=>{ activateTab('companies'); $('#tabs').scrollIntoView({behavior:'smooth',block:'start'}); });
+if(CLIENT_NAME) $('#prepFor').textContent = CLIENT_NAME;
+
+renderLadder(); renderPresets(); loadRecord(); renderScore();
+renderFunnelInputs(); calcFunnel(); renderTrigFilters(); renderTriggers(); renderGK(); renderDefects();
+renderWarn(); renderRegFilters(); renderRegs(); renderParity(); renderBands(); renderCoFilters(); renderCompanies(); renderCoFunnel();
+</script>
+</body>
+</html>
