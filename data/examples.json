@@ -1,0 +1,342 @@
+{
+ "screened": "1 November 2026 snapshot",
+ "stats": {
+  "register": 5711780,
+  "sector": 810,
+  "owner": 634,
+  "checked": 240,
+  "signalled": 48
+ },
+ "examples": [
+  {
+   "n": "02448880",
+   "name": "T.G. Precision Engineering Ltd",
+   "sector": "eng",
+   "town": "Malton",
+   "inc": 1989,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1989; Total Exemption Full accounts filer; registered in Malton (YO17 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "03164148",
+   "name": "D.A. Cooper & Sons Ltd",
+   "sector": "eng",
+   "town": "Rotherham",
+   "inc": 1996,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1996; Total Exemption Full accounts filer; registered in Rotherham (S60 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "00709252",
+   "name": "Teknequip Ltd",
+   "sector": "eng",
+   "town": "Doncaster",
+   "inc": 1961,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1961; Small accounts filer; registered in Doncaster (DN4 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "00963483",
+   "name": "Economic Cutting Ltd",
+   "sector": "eng",
+   "town": "Sheffield",
+   "inc": 1969,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "LONG"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1969; Micro Entity accounts filer; registered in Sheffield (S17 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).",
+   "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "00946376",
+   "name": "Mogul Engineers Ltd",
+   "sector": "eng",
+   "town": "South Yorkshire",
+   "inc": 1969,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "LONG"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1969; Total Exemption Full accounts filer; registered in South Yorkshire (S65 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).",
+   "next": "Not approached. Check supplier approvals, customer concentration and key-person dependency (the transferability gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "01318246",
+   "name": "Tri-Print Ltd",
+   "sector": "print",
+   "town": "Bradford",
+   "inc": 1977,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "LONG"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1977; Total Exemption Full accounts filer; registered in Bradford (BD8 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).",
+   "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "04449126",
+   "name": "Hillsprint Ltd",
+   "sector": "print",
+   "town": "Thirsk",
+   "inc": 2002,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 2002; Unaudited Abridged accounts filer; registered in Thirsk (YO7 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "04678129",
+   "name": "Philprint (Scarborough) Ltd",
+   "sector": "print",
+   "town": "Scarborough",
+   "inc": 2003,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 2003; Micro Entity accounts filer; registered in Scarborough (YO11 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "01181153",
+   "name": "James H. Wood Printers Ltd",
+   "sector": "print",
+   "town": "Penistone",
+   "inc": 1974,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1974; Total Exemption Full accounts filer; registered in Penistone (S36 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "00961692",
+   "name": "Grangefield Products (Mail Order) Ltd",
+   "sector": "print",
+   "town": "Bradford",
+   "inc": 1969,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1969; Total Exemption Full accounts filer; registered in Bradford (BD8 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder. Caution: registered as printing, but the name suggests mail order — the sector code needs a second source.",
+   "next": "Not approached. Check customer concentration, plant ownership and whether the premises are owned or leased first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "01566995",
+   "name": "Landseair Travel Co. Ltd",
+   "sector": "travel",
+   "town": "Doncaster",
+   "inc": 1981,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1981; Micro Entity accounts filer; registered in Doncaster (DN6 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "01355877",
+   "name": "D.P. International Tours Ltd",
+   "sector": "travel",
+   "town": "Scarborough",
+   "inc": 1978,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1978; Total Exemption Full accounts filer; registered in Scarborough (YO11 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "03470106",
+   "name": "Lifestyle Travel Club Ltd",
+   "sector": "travel",
+   "town": "Sheffield",
+   "inc": 1997,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 4,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1997; Total Exemption Full accounts filer; registered in Sheffield (S26 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "02864812",
+   "name": "Brewood Travel Ltd",
+   "sector": "travel",
+   "town": "Wetherby",
+   "inc": 1993,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "LONG"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1993; Total Exemption Full accounts filer; registered in Wetherby (LS22 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).",
+   "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "03328582",
+   "name": "Different World Travel Ltd",
+   "sector": "travel",
+   "town": "Sheffield",
+   "inc": 1997,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "LONG"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 1997; Micro Entity accounts filer; registered in Sheffield (S11 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register).",
+   "next": "Not approached. Check whether ATOL / ABTA membership is held and whether it can transfer to a buyer (the sector-exclusion gate) first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "03569702",
+   "name": "Eden Consultants Ltd",
+   "sector": "acct",
+   "town": "Hessle",
+   "inc": 1998,
+   "signals": [
+    "OVERDUE",
+    "AGE",
+    "NOSUCC",
+    "SOLE",
+    "LONG"
+   ],
+   "strength": 5,
+   "track": "A1 · rung 1 · nurture + verify",
+   "why": "Incorporated 1998; Total Exemption Full accounts filer; registered in Hessle (HU13 postcode area). Accounts overdue on the 1 Nov 2026 snapshot (due 2020-02-29). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "03832818",
+   "name": "E-Accounting Ltd",
+   "sector": "acct",
+   "town": "Leeds",
+   "inc": 1999,
+   "signals": [
+    "OVERDUE",
+    "NOSUCC",
+    "LONG"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 1 · nurture + verify",
+   "why": "Incorporated 1999; Unaudited Abridged accounts filer; registered in Leeds (LS2 postcode area). Accounts overdue on the 1 Nov 2026 snapshot (due 2020-08-30). No active director is under 50 (month-and-year birth data on the public register).",
+   "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "04550921",
+   "name": "Oatlands Accounting Ltd",
+   "sector": "acct",
+   "town": "Harrogate",
+   "inc": 2002,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 2002; Total Exemption Full accounts filer; registered in Harrogate (HG2 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "04360738",
+   "name": "Cleethorpes Accountancy Ltd",
+   "sector": "acct",
+   "town": "N E Lincs",
+   "inc": 2002,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 2002; Micro Entity accounts filer; registered in N E Lincs (DN35 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  },
+  {
+   "n": "04429294",
+   "name": "Trevelyan & Company Ltd",
+   "sector": "acct",
+   "town": "Wakefield",
+   "inc": 2002,
+   "signals": [
+    "AGE",
+    "NOSUCC",
+    "SOLE"
+   ],
+   "strength": 3,
+   "track": "A1 · rung 0 · nurture",
+   "why": "Incorporated 2002; Total Exemption Full accounts filer; registered in Wakefield (WF1 postcode area). The person holding 50% or more of the company is in an inferred age band of 62+. No active director is under 50 (month-and-year birth data on the public register). A single active director, who is also the controlling shareholder.",
+   "next": "Not approached. Check professional-body rules on transferring a client book and client-consent requirements first. Then look for a named route — the company's accountant or a contact of yours. Only then a quiet, non-transactional conversation about options; age is never mentioned."
+  }
+ ]
+}
